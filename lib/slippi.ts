@@ -17,23 +17,22 @@ export function parseSlippiBuffer(fileBuffer: Buffer): ParsedGame | null {
     const stats = game.getStats();
     const metadata = game.getMetadata();
 
-    const duration = stats?.gameComplete?.duration || 0;
+    const duration = stats?.lastFrame|| 0;
     const openingsPerKill = stats?.overall?.[0]?.openingsPerKill || 0;
-    const stocksTaken = stats?.overall?.[0]?.stocks || 0;
+    const stocksTaken = stats?.overall?.[0]?.killCount || 0;
 
-    // Basic character/stage info
     const character = settings?.players?.[0]?.characterId?.toString();
     const opponent = settings?.players?.[1]?.characterId?.toString();
     const stage = settings?.stageId?.toString();
 
     return {
-      date: metadata?.startAt,
+      date: metadata?.startAt || undefined,
       character,
       opponent,
       stage,
       duration,
       stocks_taken: stocksTaken,
-      openings_per_kill: openingsPerKill,
+      openings_per_kill: openingsPerKill as number,
     };
   } catch (e) {
     return null;
