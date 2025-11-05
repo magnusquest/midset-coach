@@ -10,6 +10,8 @@ export default function FileDropzone() {
     const slpFiles = files.filter((f) => f.name.endsWith('.slp'));
     if (slpFiles.length === 0) return;
 
+    console.log(slpFiles);
+
     const form = new FormData();
     for (const f of slpFiles) form.append('file', f);
     await fetch('/api/upload', { method: 'POST', body: form });

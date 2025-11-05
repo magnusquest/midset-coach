@@ -12,7 +12,27 @@ export async function POST(req: NextRequest) {
 
   const formData = await req.formData();
   const files = formData.getAll('file');
-  const insertGame = db.prepare(`INSERT INTO games (file_path, date, character, opponent, stage, duration, stocks_taken, openings_per_kill) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`);
+  const insertGame = db.prepare(
+    `INSERT INTO games (
+      file_path,
+      date,
+      character,
+      opponent,
+      stage,
+      duration,
+      stocks_taken,
+      openings_per_kill
+    ) VALUES (
+      @file_path,
+      @date,
+      @character,
+      @opponent,
+      @stage,
+      @duration,
+      @stocks_taken,
+      @openings_per_kill
+    )`
+  );
 
   const results: any[] = [];
   for (const f of files) {
@@ -21,7 +41,16 @@ export async function POST(req: NextRequest) {
     const buffer = Buffer.from(arrayBuffer);
     const parsed = parseSlippiBuffer(buffer);
     if (!parsed) continue;
-    const info = insertGame.run(f.name, parsed.date || null, parsed.character || null, parsed.opponent || null, parsed.stage || null, parsed.duration || null, parsed.stocks_taken || null, parsed.openings_per_kill || null);
+    const info = insertGame.run({
+      file_path: f.name,
+      date: parsed.date ?? null,
+      character: parsed.character ?? null,
+      opponent: parsed.opponent ?? null,
+      stage: parsed.stage ?? null,
+      duration: parsed.duration ?? null,
+      stocks_taken: parsed.stocks_taken ?? null,
+      openings_per_kill: parsed.openings_per_kill ?? null,
+    });
     const gameId = Number(info.lastInsertRowid);
     // Create a base document with simple stats for RAG
     const baseText = `Game Stats:\nStage: ${parsed.stage}\nYou: ${parsed.character} vs ${parsed.opponent}\nDuration: ${parsed.duration}s\nOPK: ${parsed.openings_per_kill}\nStocks Taken: ${parsed.stocks_taken}`;

@@ -17,16 +17,30 @@ export function parseSlippiBuffer(fileBuffer: Buffer): ParsedGame | null {
     const stats = game.getStats();
     const metadata = game.getMetadata();
 
-    const duration = stats?.lastFrame|| 0;
-    const openingsPerKill = stats?.overall?.[0]?.openingsPerKill || 0;
-    const stocksTaken = stats?.overall?.[0]?.killCount || 0;
+    const rawDuration = Number((stats as any)?.lastFrame ?? 0);
+    const duration = Number.isFinite(rawDuration) ? Math.round(rawDuration) : 0;
+    const rawOPK = Number((stats as any)?.overall?.[0]?.openingsPerKill ?? 0);
+    const openingsPerKill = Number.isFinite(rawOPK) ? rawOPK : 0;
+    const rawKills = Number((stats as any)?.overall?.[0]?.killCount ?? 0);
+    const stocksTaken = Number.isFinite(rawKills) ? rawKills : 0;
 
     const character = settings?.players?.[0]?.characterId?.toString();
     const opponent = settings?.players?.[1]?.characterId?.toString();
     const stage = settings?.stageId?.toString();
 
+    let dateStr: string | undefined = undefined;
+    const startAtRaw = (metadata as any)?.startAt;
+    if (startAtRaw) {
+      try {
+        const d = new Date(startAtRaw);
+        dateStr = isNaN(d.getTime()) ? undefined : d.toISOString();
+      } catch {
+        dateStr = undefined;
+      }
+    }
+
     return {
-      date: metadata?.startAt || undefined,
+      date: dateStr,
       character,
       opponent,
       stage,
