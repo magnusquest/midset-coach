@@ -1,4 +1,4 @@
-import { SlippiGame } from 'slippi-js';
+import { SlippiGame } from '@slippi/slippi-js';
 
 export type ParsedGame = {
   date?: string;
