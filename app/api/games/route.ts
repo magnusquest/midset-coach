@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ensureSchema } from '../../../lib/schema';
 import { getDb } from '../../../lib/db';
+import { CharacterId, isValidCharacterId, StageId, isValidStageId } from '../../../lib/types';
 
 export const runtime = 'nodejs';
 
@@ -42,16 +43,28 @@ export async function GET(req: NextRequest) {
 
   // Add filters
   if (character) {
-    query += ' AND character = ?';
-    params.push(character);
+    // Convert character to number and validate using CharacterId type
+    const characterNum = parseInt(character, 10);
+    if (!isNaN(characterNum) && isValidCharacterId(characterNum)) {
+      query += ' AND character = ?';
+      params.push(characterNum as CharacterId);
+    }
   }
   if (opponent) {
-    query += ' AND opponent = ?';
-    params.push(opponent);
+    // Convert opponent to number and validate using CharacterId type
+    const opponentNum = parseInt(opponent, 10);
+    if (!isNaN(opponentNum) && isValidCharacterId(opponentNum)) {
+      query += ' AND opponent = ?';
+      params.push(opponentNum as CharacterId);
+    }
   }
   if (stage) {
-    query += ' AND stage = ?';
-    params.push(stage);
+    // Convert stage to number and validate using StageId type
+    const stageNum = parseInt(stage, 10);
+    if (!isNaN(stageNum) && isValidStageId(stageNum)) {
+      query += ' AND stage = ?';
+      params.push(stageNum as StageId);
+    }
   }
   if (winLoss) {
     query += ' AND win_loss = ?';
@@ -80,9 +93,9 @@ export async function GET(req: NextRequest) {
     id: number;
     file_path: string;
     date: string | null;
-    character: string | null;
-    opponent: string | null;
-    stage: string | null;
+    character: CharacterId | null;
+    opponent: CharacterId | null;
+    stage: StageId | null;
     duration: number | null;
     stocks_taken: number | null;
     openings_per_kill: number | null;
@@ -94,16 +107,28 @@ export async function GET(req: NextRequest) {
   let countQuery = 'SELECT COUNT(*) as count FROM games WHERE 1=1';
   const countParams: any[] = [];
   if (character) {
-    countQuery += ' AND character = ?';
-    countParams.push(character);
+    // Convert character to number and validate using CharacterId type
+    const characterNum = parseInt(character, 10);
+    if (!isNaN(characterNum) && isValidCharacterId(characterNum)) {
+      countQuery += ' AND character = ?';
+      countParams.push(characterNum as CharacterId);
+    }
   }
   if (opponent) {
-    countQuery += ' AND opponent = ?';
-    countParams.push(opponent);
+    // Convert opponent to number and validate using CharacterId type
+    const opponentNum = parseInt(opponent, 10);
+    if (!isNaN(opponentNum) && isValidCharacterId(opponentNum)) {
+      countQuery += ' AND opponent = ?';
+      countParams.push(opponentNum as CharacterId);
+    }
   }
   if (stage) {
-    countQuery += ' AND stage = ?';
-    countParams.push(stage);
+    // Convert stage to number and validate using StageId type
+    const stageNum = parseInt(stage, 10);
+    if (!isNaN(stageNum) && isValidStageId(stageNum)) {
+      countQuery += ' AND stage = ?';
+      countParams.push(stageNum as StageId);
+    }
   }
   if (winLoss) {
     countQuery += ' AND win_loss = ?';

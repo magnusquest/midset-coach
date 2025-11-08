@@ -2,15 +2,20 @@
 import React, { useState } from 'react';
 
 type Props = {
-  filePath: string;
+  filePath: string; // This is actually just the game filename (e.g., "game123.slp")
   gameId: number;
 };
 
-export default function ReplayLauncher({ filePath, gameId }: Props) {
+export default function ReplayLauncher({ filePath: gameFilename, gameId }: Props) {
   const [launching, setLaunching] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function handleLaunch() {
+    if (!gameFilename || gameFilename.trim() === '') {
+      setError('Game filename is missing');
+      return;
+    }
+    
     setLaunching(true);
     setError(null);
     
@@ -18,10 +23,15 @@ export default function ReplayLauncher({ filePath, gameId }: Props) {
       const res = await fetch('/api/replay/launch', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ filePath, gameId }),
+        body: JSON.stringify({ filePath: gameFilename, gameId }),
       });
       
-      const data = await res.json();
+      const data = await res.json().catch(() => ({ error: `HTTP ${res.status}: ${res.statusText}` }));
+      
+      if (!res.ok) {
+        setError(data.error || `Failed to launch replay (${res.status})`);
+        return;
+      }
       
       if (data.ok) {
         // Success
