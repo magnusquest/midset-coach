@@ -1,5 +1,6 @@
 import React from 'react';
 import './globals.css';
+import Header from './Header';
 
 export const metadata = {
   title: 'MidSet Coach',
@@ -13,15 +14,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
-        <header style={{ padding: 16, borderBottom: '1px solid #eee' }}>
-          <h1 style={{ margin: 0 }}>MidSet Coach</h1>
-          <nav style={{ marginTop: 8, display: 'flex', gap: 12 }}>
-            <a href="/review">Review</a>
-            <a href="/coach">Coach</a>
-          </nav>
-        </header>
-        <main style={{ padding: 16 }}>{children}</main>
+      <body style={{ 
+        margin: 0, 
+        padding: 0,
+        background: 'linear-gradient(135deg, #faf5ff 0%, #f0fff0 100%)',
+        minHeight: '100vh',
+      }}>
+        <Header />
+        <main>{children}</main>
       </body>
     </html>
   );

@@ -7,6 +7,27 @@ import { upsertDocument } from '../../../lib/rag';
 
 export const runtime = 'nodejs';
 
+// GET: fetch notes for a specific game
+export async function GET(req: NextRequest) {
+  ensureSchema();
+  const db = getDb();
+  const searchParams = req.nextUrl.searchParams;
+  const gameId = searchParams.get('gameId');
+  
+  if (!gameId) {
+    return NextResponse.json({ error: 'gameId required' }, { status: 400 });
+  }
+  
+  const notes = db.prepare('SELECT id, content, content_audio_url, created_at FROM notes WHERE game_id = ? ORDER BY created_at DESC').all(Number(gameId)) as Array<{
+    id: number;
+    content: string | null;
+    content_audio_url: string | null;
+    created_at: string;
+  }>;
+  
+  return NextResponse.json({ notes });
+}
+
 export async function POST(req: NextRequest) {
   ensureSchema();
   const db = getDb();
@@ -67,11 +88,38 @@ export async function PUT(req: NextRequest) {
   const { query, context } = await req.json();
   const key = process.env.OPENAI_API_KEY;
   if (!key) return NextResponse.json({ answer: 'Missing OpenAI key' });
-  const system = 'You are MidSet Coach, a Super Smash Bros. Melee coach. Use the provided context (game stats and notes) to give practical, concise coaching advice.';
+  
+  // Format context for better AI understanding
+  let contextText = '';
+  if (context && Array.isArray(context) && context.length > 0) {
+    contextText = context.map((item: any, idx: number) => {
+      if (item.gameInfo) {
+        return `Game #${item.gameInfo.id}: ${item.gameInfo.character} vs ${item.gameInfo.opponent} on ${item.gameInfo.stage} (${item.gameInfo.duration}, OPK: ${item.gameInfo.openings_per_kill || 'N/A'}, Stocks: ${item.gameInfo.stocks_taken || 0})\n${item.text || item}`;
+      }
+      return item.text || item;
+    }).join('\n\n---\n\n');
+  } else {
+    contextText = 'No relevant game data found.';
+  }
+  
+  const system = `You are MidSet Coach, an expert Super Smash Bros. Melee coach and analyst. Your role is to:
+1. Analyze game statistics and player notes to provide actionable coaching advice
+2. Identify patterns in performance (openings per kill, stocks taken, matchup performance)
+3. Give specific, practical tips for improvement
+4. Reference specific games when relevant
+5. Be encouraging but honest about areas needing work
+
+Use the provided context to answer questions about the player's games, stats, and notes. Be specific and reference game numbers or statistics when relevant.`;
+
+  const userMessage = contextText 
+    ? `Here is relevant context from the player's games and notes:\n\n${contextText}\n\nPlayer's question: ${query}`
+    : `Player's question: ${query}\n\nNote: No game data or notes found in the database yet.`;
+  
   const messages = [
     { role: 'system', content: system },
-    { role: 'user', content: `Context:\n${JSON.stringify(context)}\n\nUser: ${query}` }
+    { role: 'user', content: userMessage }
   ];
+  
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
