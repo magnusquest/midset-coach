@@ -18,10 +18,11 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'gameId required' }, { status: 400 });
   }
   
-  const notes = db.prepare('SELECT id, content, content_audio_url, created_at FROM notes WHERE game_id = ? ORDER BY created_at DESC').all(Number(gameId)) as Array<{
+  const notes = db.prepare('SELECT id, content, content_audio_url, note_type, created_at FROM notes WHERE game_id = ? ORDER BY created_at DESC').all(Number(gameId)) as Array<{
     id: number;
     content: string | null;
     content_audio_url: string | null;
+    note_type: string | null;
     created_at: string;
   }>;
   
@@ -34,10 +35,14 @@ export async function POST(req: NextRequest) {
   const contentType = req.headers.get('content-type') || '';
   // JSON for text notes
   if (contentType.includes('application/json')) {
-    const { gameId, content } = await req.json();
-    const stmt = db.prepare('INSERT INTO notes (game_id, content) VALUES (?, ?)');
-    const info = stmt.run(gameId ?? null, content ?? '');
-    await upsertDocument({ gameId: gameId ?? null, source: 'user-notes', text: content ?? '' });
+    const { gameId, content, noteType } = await req.json();
+    const stmt = db.prepare('INSERT INTO notes (game_id, content, note_type) VALUES (?, ?, ?)');
+    const info = stmt.run(gameId ?? null, content ?? '', noteType ?? null);
+    const noteTypeLabel = noteType === 'what_went_well' ? 'What Went Well' : 
+                          noteType === 'could_improve' ? 'What Could Improve' :
+                          noteType === 'research' ? 'What to Research' : 'Free Form';
+    const noteText = `[${noteTypeLabel}] ${content ?? ''}`;
+    await upsertDocument({ gameId: gameId ?? null, source: 'user-notes', text: noteText });
     return NextResponse.json({ ok: true, id: Number(info.lastInsertRowid) });
   }
   // Multipart for audio upload -> transcribe

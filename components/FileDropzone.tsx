@@ -5,16 +5,17 @@ import React, { useState, useEffect } from 'react';
  * Recursively finds all .slp files in a directory handle
  */
 async function findSlpFilesRecursively(
-  dirHandle: FileSystemDirectoryHandle,
+  dirHandle: any, // FileSystemDirectoryHandle
   path = ''
 ): Promise<File[]> {
   const slpFiles: File[] = [];
 
   try {
-    for await (const entry of dirHandle.values()) {
-      const entryPath = path ? `${path}/${entry.name}` : entry.name;
+    // Use entries() instead of values() for better TypeScript compatibility
+    for await (const [name, entry] of dirHandle.entries()) {
+      const entryPath = path ? `${path}/${name}` : name;
 
-      if (entry.kind === 'file' && entry.name.endsWith('.slp')) {
+      if (entry.kind === 'file' && name.endsWith('.slp')) {
         try {
           const file = await entry.getFile();
           // Create a new File with the relative path as the name for reference
@@ -45,11 +46,26 @@ export default function FileDropzone() {
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [fileCount, setFileCount] = useState<number | null>(null);
   const [isSupported, setIsSupported] = useState<boolean | null>(null);
+  const [watching, setWatching] = useState(false);
 
   // Check if File System Access API is supported (client-side only)
   useEffect(() => {
     setIsSupported(typeof window !== 'undefined' && 'showDirectoryPicker' in window);
+    checkWatchStatus();
   }, []);
+
+  async function checkWatchStatus() {
+    try {
+      const res = await fetch('/api/watch/status');
+      const data = await res.json();
+      if (data.path) {
+        setSelectedFolder(data.path);
+        setWatching(data.watching);
+      }
+    } catch (error) {
+      console.error('Failed to check watch status:', error);
+    }
+  }
 
   const handleSelectFolder = async () => {
     // Check if File System Access API is supported
@@ -94,6 +110,25 @@ export default function FileDropzone() {
       const result = await response.json();
 
       if (result.ok) {
+        // Store folder path and start watching
+        const folderPath = dirHandle.name;
+        setSelectedFolder(folderPath);
+        
+        // Start watching for new files
+        try {
+          const watchRes = await fetch('/api/watch/start', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ path: folderPath }),
+          });
+          const watchData = await watchRes.json();
+          if (watchData.ok) {
+            setWatching(true);
+          }
+        } catch (watchErr) {
+          console.error('Failed to start watching:', watchErr);
+        }
+        
         alert(`Successfully imported ${result.results.length} game(s)!`);
         // Refresh the page to show new games
         window.location.reload();
@@ -114,6 +149,57 @@ export default function FileDropzone() {
       setFileCount(null);
     }
   };
+
+  // Don't show if folder is already selected
+  if (selectedFolder && !isLoading) {
+    return (
+      <div
+        style={{
+          padding: 20,
+          borderRadius: 12,
+          background: 'linear-gradient(135deg, #f0f9f0 0%, #f5f0ff 100%)',
+          border: '2px solid #d4f2d4',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
+        <div>
+          <p style={{ margin: 0, color: '#52b052', fontSize: 14, fontWeight: 600 }}>
+            Watching folder: {selectedFolder}
+          </p>
+          {watching && (
+            <p style={{ margin: '4px 0 0 0', color: '#7dd87d', fontSize: 12 }}>
+              Auto-loading new games...
+            </p>
+          )}
+        </div>
+        <button
+          onClick={async () => {
+            try {
+              await fetch('/api/watch/stop', { method: 'POST' });
+              setSelectedFolder(null);
+              setWatching(false);
+            } catch (error) {
+              console.error('Failed to stop watching:', error);
+            }
+          }}
+          style={{
+            padding: '8px 16px',
+            fontSize: 13,
+            fontWeight: 600,
+            background: 'white',
+            color: '#6b46c1',
+            border: '2px solid #c5b8fa',
+            borderRadius: 8,
+            cursor: 'pointer',
+          }}
+        >
+          Change Folder
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -169,9 +255,7 @@ export default function FileDropzone() {
       
       {!isLoading && (
         <p style={{ margin: '8px 0 0 0', color: '#6b46c1', fontSize: 14, fontWeight: 500 }}>
-          {selectedFolder
-            ? `Selected: ${selectedFolder}`
-            : 'Click to browse and import all .slp files from a folder'}
+          Click to browse and import all .slp files from a folder
         </p>
       )}
       

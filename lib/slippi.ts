@@ -20,6 +20,8 @@ export type ParsedGame = {
   stocks_taken?: number;
   /** Average openings required per kill - lower is better */
   openings_per_kill?: number;
+  /** Win/loss result: 'win', 'loss', or undefined if cannot determine */
+  win_loss?: string;
 };
 
 /**
@@ -136,6 +138,52 @@ export function parseSlippiBuffer(fileBuffer: Buffer): ParsedGame | null {
       }
     }
 
+    // Determine win/loss by checking stocks remaining at game end
+    // Get final frame data to check stocks remaining
+    let winLoss: string | undefined = undefined;
+    try {
+      const finalFrame = (stats as any)?.lastFrame;
+      if (finalFrame && finalFrame > 0) {
+        // Get frame data for the last frame
+        const frames = game.getFrames();
+        if (frames && finalFrame in frames) {
+          const lastFrame = frames[finalFrame];
+          if (lastFrame && lastFrame.players) {
+            // Check stocks remaining for each player
+            const player0Stocks = lastFrame.players[0]?.post?.stocksRemaining ?? null;
+            const player1Stocks = lastFrame.players[1]?.post?.stocksRemaining ?? null;
+            
+            if (player0Stocks !== null && player1Stocks !== null) {
+              // Player with more stocks remaining wins
+              if (player0Stocks > player1Stocks) {
+                winLoss = 'win';
+              } else if (player1Stocks > player0Stocks) {
+                winLoss = 'loss';
+              }
+              // If equal, we can't determine (could be timeout or other end condition)
+            }
+          }
+        }
+      }
+      
+      // Fallback: use kill count comparison if frame data not available
+      if (!winLoss && stats && (stats as any).overall) {
+        const player0Kills = (stats as any).overall[0]?.killCount ?? 0;
+        const player1Kills = (stats as any).overall[1]?.killCount ?? 0;
+        
+        // In Melee, typically 4 stocks, so if one player has 4 kills, they won
+        // This is a heuristic and may not always be accurate
+        if (player0Kills >= 4 && player1Kills < 4) {
+          winLoss = 'win';
+        } else if (player1Kills >= 4 && player0Kills < 4) {
+          winLoss = 'loss';
+        }
+      }
+    } catch (e) {
+      // If win/loss detection fails, leave it undefined
+      winLoss = undefined;
+    }
+
     return {
       date: dateStr,
       character,
@@ -144,6 +192,7 @@ export function parseSlippiBuffer(fileBuffer: Buffer): ParsedGame | null {
       duration,
       stocks_taken: stocksTaken,
       openings_per_kill: openingsPerKill as number,
+      win_loss: winLoss,
     };
   } catch (e) {
     // If parsing fails (invalid file, corrupted data, etc.), return null

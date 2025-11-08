@@ -4,6 +4,7 @@ import { getDb } from '../../../lib/db';
 import { parseSlippiBuffer } from '../../../lib/slippi';
 import { upsertDocument } from '../../../lib/rag';
 import { getCharacterName, getStageName, formatDuration } from '../../../lib/slippi-utils';
+import crypto from 'crypto';
 
 export const runtime = 'nodejs';
 
@@ -13,6 +14,7 @@ export async function POST(req: NextRequest) {
 
   const formData = await req.formData();
   const files = formData.getAll('file');
+  const checkGame = db.prepare('SELECT id FROM games WHERE file_path = ? AND file_mtime = ?');
   const insertGame = db.prepare(
     `INSERT INTO games (
       file_path,
@@ -22,7 +24,10 @@ export async function POST(req: NextRequest) {
       stage,
       duration,
       stocks_taken,
-      openings_per_kill
+      openings_per_kill,
+      win_loss,
+      file_hash,
+      file_mtime
     ) VALUES (
       @file_path,
       @date,
@@ -31,7 +36,10 @@ export async function POST(req: NextRequest) {
       @stage,
       @duration,
       @stocks_taken,
-      @openings_per_kill
+      @openings_per_kill,
+      @win_loss,
+      @file_hash,
+      @file_mtime
     )`
   );
 
@@ -40,6 +48,17 @@ export async function POST(req: NextRequest) {
     if (!(f instanceof File)) continue;
     const arrayBuffer = await f.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
+    
+    // Calculate file hash and mtime
+    const fileHash = crypto.createHash('md5').update(buffer).digest('hex');
+    const fileMtime = f.lastModified ? Math.floor(f.lastModified / 1000) : Date.now();
+    
+    // Check if game already exists with same path and mtime
+    const existing = checkGame.get(f.name, fileMtime) as { id: number } | undefined;
+    if (existing) {
+      continue; // Skip if already exists
+    }
+    
     const parsed = parseSlippiBuffer(buffer);
     if (!parsed) continue;
     const info = insertGame.run({
@@ -51,6 +70,9 @@ export async function POST(req: NextRequest) {
       duration: parsed.duration ?? null,
       stocks_taken: parsed.stocks_taken ?? null,
       openings_per_kill: parsed.openings_per_kill ?? null,
+      win_loss: parsed.win_loss ?? null,
+      file_hash: fileHash,
+      file_mtime: fileMtime,
     });
     const gameId = Number(info.lastInsertRowid);
     

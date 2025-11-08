@@ -55,6 +55,36 @@ export default function Header() {
           </h1>
           <nav style={{ display: 'flex', gap: 8 }}>
             <a 
+              href="/games"
+              style={{
+                padding: '8px 16px',
+                borderRadius: 8,
+                textDecoration: 'none',
+                fontSize: 15,
+                fontWeight: 600,
+                transition: 'all 0.2s',
+                background: pathname === '/games' 
+                  ? 'linear-gradient(135deg, #9b87f5 0%, #7dd87d 100%)'
+                  : 'transparent',
+                color: pathname === '/games' ? 'white' : '#6b46c1',
+                border: pathname === '/games' ? 'none' : '2px solid #c5b8fa',
+              }}
+              onMouseEnter={(e) => {
+                if (pathname !== '/games') {
+                  e.currentTarget.style.background = '#f5f0ff';
+                  e.currentTarget.style.borderColor = '#9b87f5';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (pathname !== '/games') {
+                  e.currentTarget.style.background = 'transparent';
+                  e.currentTarget.style.borderColor = '#c5b8fa';
+                }
+              }}
+            >
+              Games
+            </a>
+            <a 
               href="/review"
               style={{
                 padding: '8px 16px',

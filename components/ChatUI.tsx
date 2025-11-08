@@ -1,7 +1,12 @@
 "use client";
 import React, { useRef, useState } from 'react';
 
-export default function ChatUI() {
+type Props = {
+  userCharacter?: string | null;
+  opponentCharacter?: string | null;
+};
+
+export default function ChatUI({ userCharacter, opponentCharacter }: Props) {
   const [messages, setMessages] = useState<{ role: 'user' | 'assistant'; content: string }[]>([]);
   const [input, setInput] = useState('');
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -13,9 +18,24 @@ export default function ChatUI() {
     setInput('');
 
     // Retrieve context then ask assistant (text fallback)
-    const ctxRes = await fetch('/api/search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: content, k: 5 }) });
+    // Include matchup filtering if characters are selected
+    const searchBody: any = { query: content, k: 5 };
+    if (userCharacter && opponentCharacter) {
+      searchBody.userCharacter = userCharacter;
+      searchBody.opponentCharacter = opponentCharacter;
+    }
+    
+    const ctxRes = await fetch('/api/search', { 
+      method: 'POST', 
+      headers: { 'Content-Type': 'application/json' }, 
+      body: JSON.stringify(searchBody) 
+    });
     const ctx = await ctxRes.json();
-    const res = await fetch('/api/notes', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: content, context: ctx.results }) });
+    const res = await fetch('/api/notes', { 
+      method: 'PUT', 
+      headers: { 'Content-Type': 'application/json' }, 
+      body: JSON.stringify({ query: content, context: ctx.results }) 
+    });
     const data = await res.json();
     const answer = data.answer || '(no response)';
     setMessages((m) => [...m, { role: 'assistant', content: answer }]);

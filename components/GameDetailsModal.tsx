@@ -23,11 +23,6 @@ type Props = {
 export default function GameDetailsModal({ game, onClose }: Props) {
   const [characterImgError, setCharacterImgError] = useState(false);
   const [opponentImgError, setOpponentImgError] = useState(false);
-  const [notes, setNotes] = useState<string>('');
-  const [saving, setSaving] = useState(false);
-  const [savedMessage, setSavedMessage] = useState<string | null>(null);
-  const [existingNotes, setExistingNotes] = useState<Array<{ id: number; content: string | null; created_at: string }>>([]);
-  const [loadingNotes, setLoadingNotes] = useState(false);
 
   useEffect(() => {
     if (!game) return;
@@ -42,63 +37,6 @@ export default function GameDetailsModal({ game, onClose }: Props) {
     return () => window.removeEventListener('keydown', handleEscape);
   }, [game, onClose]);
 
-  // Load existing notes when game changes
-  useEffect(() => {
-    if (!game) {
-      setNotes('');
-      setExistingNotes([]);
-      return;
-    }
-
-    async function loadNotes() {
-      setLoadingNotes(true);
-      try {
-        const res = await fetch(`/api/notes?gameId=${game.id}`);
-        const data = await res.json();
-        setExistingNotes(data.notes || []);
-      } catch (error) {
-        console.error('Failed to load notes:', error);
-      } finally {
-        setLoadingNotes(false);
-      }
-    }
-
-    loadNotes();
-  }, [game]);
-
-  async function saveNotes() {
-    if (!game || !notes.trim()) return;
-    
-    setSaving(true);
-    setSavedMessage(null);
-    
-    try {
-      const res = await fetch('/api/notes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ gameId: game.id, content: notes.trim() })
-      });
-      
-      const data = await res.json();
-      
-      if (data.ok) {
-        setNotes('');
-        setSavedMessage('Notes saved successfully!');
-        // Reload notes
-        const notesRes = await fetch(`/api/notes?gameId=${game.id}`);
-        const notesData = await notesRes.json();
-        setExistingNotes(notesData.notes || []);
-        
-        setTimeout(() => setSavedMessage(null), 3000);
-      }
-    } catch (error) {
-      console.error('Failed to save notes:', error);
-      setSavedMessage('Failed to save notes');
-      setTimeout(() => setSavedMessage(null), 3000);
-    } finally {
-      setSaving(false);
-    }
-  }
 
   if (!game) return null;
 
@@ -142,30 +80,58 @@ export default function GameDetailsModal({ game, onClose }: Props) {
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, paddingBottom: 16, borderBottom: '2px solid #e8e0ff' }}>
           <h2 style={{ margin: 0, color: '#6b46c1', fontSize: 24, fontWeight: 700 }}>Game #{game.id}</h2>
-          <button
-            onClick={onClose}
-            style={{
-              background: 'linear-gradient(135deg, #9b87f5 0%, #7dd87d 100%)',
-              border: 'none',
-              fontSize: 20,
-              cursor: 'pointer',
-              padding: '4px 12px',
-              color: 'white',
-              borderRadius: 8,
-              fontWeight: 600,
-              transition: 'all 0.2s',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.1)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(155, 135, 245, 0.4)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.boxShadow = 'none';
-            }}
-          >
-            ×
-          </button>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <button
+              onClick={() => {
+                window.location.href = `/review?gameId=${game.id}`;
+              }}
+              style={{
+                background: 'linear-gradient(135deg, #7dd87d 0%, #9b87f5 100%)',
+                border: 'none',
+                fontSize: 14,
+                cursor: 'pointer',
+                padding: '8px 16px',
+                color: 'white',
+                borderRadius: 8,
+                fontWeight: 600,
+                transition: 'all 0.2s',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'scale(1.05)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(125, 216, 125, 0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              Review
+            </button>
+            <button
+              onClick={onClose}
+              style={{
+                background: 'linear-gradient(135deg, #9b87f5 0%, #7dd87d 100%)',
+                border: 'none',
+                fontSize: 20,
+                cursor: 'pointer',
+                padding: '4px 12px',
+                color: 'white',
+                borderRadius: 8,
+                fontWeight: 600,
+                transition: 'all 0.2s',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'scale(1.1)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(155, 135, 245, 0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              ×
+            </button>
+          </div>
         </div>
 
         <div style={{ display: 'grid', gap: 24 }}>
@@ -355,114 +321,6 @@ export default function GameDetailsModal({ game, onClose }: Props) {
                   </div>
                 </div>
               )}
-            </div>
-          </div>
-
-          {/* Review Notes Section */}
-          <div style={{ background: 'linear-gradient(135deg, #f5f0ff 0%, #f0f9f0 100%)', padding: 16, borderRadius: 12, border: '1px solid #e8e0ff' }}>
-            <h3 style={{ margin: '0 0 16px 0', fontSize: 18, fontWeight: 700, color: '#6b46c1', display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ background: 'linear-gradient(135deg, #9b87f5 0%, #7dd87d 100%)', width: 4, height: 20, borderRadius: 2 }}></span>
-              Review Notes
-            </h3>
-            
-            {/* Existing Notes */}
-            {loadingNotes ? (
-              <div style={{ padding: '12px', textAlign: 'center', color: '#9b87f5', fontSize: 14 }}>
-                Loading notes...
-              </div>
-            ) : existingNotes.length > 0 ? (
-              <div style={{ display: 'grid', gap: 12, marginBottom: 16 }}>
-                {existingNotes.map((note) => (
-                  <div
-                    key={note.id}
-                    style={{
-                      padding: '12px',
-                      background: 'white',
-                      borderRadius: 8,
-                      border: '1px solid #e8e0ff',
-                    }}
-                  >
-                    <div style={{ fontSize: 14, color: '#4a5568', whiteSpace: 'pre-wrap', marginBottom: 6 }}>
-                      {note.content}
-                    </div>
-                    <div style={{ fontSize: 11, color: '#95a5a6' }}>
-                      {new Date(note.created_at).toLocaleString()}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : null}
-
-            {/* Add New Note */}
-            <div style={{ display: 'grid', gap: 12 }}>
-              <textarea
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                placeholder="Add your review notes for this game..."
-                rows={4}
-                style={{
-                  padding: '12px',
-                  borderRadius: 8,
-                  border: '2px solid #c5b8fa',
-                  fontSize: 14,
-                  fontFamily: 'inherit',
-                  resize: 'vertical',
-                  background: 'white',
-                  color: '#4a5568',
-                  transition: 'border-color 0.2s',
-                }}
-                onFocus={(e) => {
-                  e.currentTarget.style.borderColor = '#9b87f5';
-                }}
-                onBlur={(e) => {
-                  e.currentTarget.style.borderColor = '#c5b8fa';
-                }}
-              />
-              
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <button
-                  onClick={saveNotes}
-                  disabled={!notes.trim() || saving}
-                  style={{
-                    padding: '10px 20px',
-                    fontSize: 14,
-                    fontWeight: 600,
-                    background: notes.trim() && !saving
-                      ? 'linear-gradient(135deg, #9b87f5 0%, #7dd87d 100%)'
-                      : 'linear-gradient(135deg, #c5b8fa 0%, #aee8ae 100%)',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: 8,
-                    cursor: notes.trim() && !saving ? 'pointer' : 'not-allowed',
-                    transition: 'all 0.2s',
-                    boxShadow: notes.trim() && !saving ? '0 2px 8px rgba(155, 135, 245, 0.3)' : 'none',
-                  }}
-                  onMouseEnter={(e) => {
-                    if (notes.trim() && !saving) {
-                      e.currentTarget.style.transform = 'scale(1.02)';
-                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(155, 135, 245, 0.4)';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (notes.trim() && !saving) {
-                      e.currentTarget.style.transform = 'scale(1)';
-                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(155, 135, 245, 0.3)';
-                    }
-                  }}
-                >
-                  {saving ? 'Saving...' : 'Save Note'}
-                </button>
-                
-                {savedMessage && (
-                  <span style={{ 
-                    fontSize: 13, 
-                    color: savedMessage.includes('Failed') ? '#f59e0b' : '#7dd87d',
-                    fontWeight: 500,
-                  }}>
-                    {savedMessage}
-                  </span>
-                )}
-              </div>
             </div>
           </div>
         </div>

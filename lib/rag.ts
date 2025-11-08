@@ -33,25 +33,59 @@ export async function upsertDocument({ gameId, source, text }: { gameId: number 
   return { documentId };
 }
 
-export async function semanticSearch({ query, k = 5, gameId }: { query: string; k?: number; gameId?: number; }) {
+export async function semanticSearch({ 
+  query, 
+  k = 5, 
+  gameId, 
+  userCharacter, 
+  opponentCharacter 
+}: { 
+  query: string; 
+  k?: number; 
+  gameId?: number;
+  userCharacter?: string | null;
+  opponentCharacter?: string | null;
+}) {
   const db = getDb();
   if (vssAvailable(db)) {
     const [qEmbed] = await embedTexts([query]);
     const qVec = Buffer.from(new Float32Array(qEmbed).buffer);
-    let sql = 'SELECT chunks.id, chunks.text, chunks.document_id FROM chunk_embeddings JOIN chunks ON chunk_embeddings.chunk_id = chunks.id ORDER BY vss0_distance(embedding, ?) ASC LIMIT ?';
+    let sql = 'SELECT chunks.id, chunks.text, chunks.document_id FROM chunk_embeddings JOIN chunks ON chunk_embeddings.chunk_id = chunks.id JOIN documents ON chunks.document_id = documents.id LEFT JOIN games ON documents.game_id = games.id WHERE 1=1';
+    const params: any[] = [];
+    
     if (gameId) {
-      sql = 'SELECT chunks.id, chunks.text, chunks.document_id FROM chunk_embeddings JOIN chunks ON chunk_embeddings.chunk_id = chunks.id JOIN documents ON chunks.document_id = documents.id WHERE documents.game_id = ? ORDER BY vss0_distance(embedding, ?) ASC LIMIT ?';
-      const rows = db.prepare(sql).all(gameId, qVec, k) as any[];
-      return rows.map(r => ({ id: r.id, text: r.text, score: 0 }));
-    } else {
-      const rows = db.prepare(sql).all(qVec, k) as any[];
-      return rows.map(r => ({ id: r.id, text: r.text, score: 0 }));
+      sql += ' AND documents.game_id = ?';
+      params.push(gameId);
     }
+    
+    // Filter by matchup (directional: user character vs opponent character)
+    if (userCharacter && opponentCharacter) {
+      sql += ' AND games.character = ? AND games.opponent = ?';
+      params.push(userCharacter, opponentCharacter);
+    }
+    
+    sql += ' ORDER BY vss0_distance(embedding, ?) ASC LIMIT ?';
+    params.push(qVec, k);
+    
+    const rows = db.prepare(sql).all(...params) as any[];
+    return rows.map(r => ({ id: r.id, text: r.text, score: 0 }));
   }
   // Fallback: simple LIKE search and naive cosine on client-embedded chunks
-  const chunks = gameId
-    ? (db.prepare('SELECT chunks.id, chunks.text FROM chunks JOIN documents ON chunks.document_id = documents.id WHERE documents.game_id = ?').all(gameId) as any[])
-    : (db.prepare('SELECT id, text FROM chunks').all() as any[]);
+  let sql = 'SELECT chunks.id, chunks.text FROM chunks JOIN documents ON chunks.document_id = documents.id LEFT JOIN games ON documents.game_id = games.id WHERE 1=1';
+  const params: any[] = [];
+  
+  if (gameId) {
+    sql += ' AND documents.game_id = ?';
+    params.push(gameId);
+  }
+  
+  // Filter by matchup (directional: user character vs opponent character)
+  if (userCharacter && opponentCharacter) {
+    sql += ' AND games.character = ? AND games.opponent = ?';
+    params.push(userCharacter, opponentCharacter);
+  }
+  
+  const chunks = db.prepare(sql).all(...params) as any[];
   const q = query.toLowerCase();
   const scored = chunks.map((c) => ({ id: c.id, text: c.text, score: c.text.toLowerCase().includes(q) ? 1 : 0 }));
   return scored.sort((a, b) => b.score - a.score).slice(0, k);

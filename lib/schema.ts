@@ -44,7 +44,62 @@ export function ensureSchema() {
       created_at TEXT DEFAULT (datetime('now')),
       FOREIGN KEY (document_id) REFERENCES documents(id)
     );
+
+    CREATE TABLE IF NOT EXISTS settings (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL,
+      updated_at TEXT DEFAULT (datetime('now'))
+    );
   `);
+
+  // Add new columns to games table if they don't exist
+  try {
+    db.exec(`
+      ALTER TABLE games ADD COLUMN file_hash TEXT;
+    `);
+  } catch (e) {
+    // Column already exists, ignore
+  }
+
+  try {
+    db.exec(`
+      ALTER TABLE games ADD COLUMN file_mtime INTEGER;
+    `);
+  } catch (e) {
+    // Column already exists, ignore
+  }
+
+  try {
+    db.exec(`
+      ALTER TABLE games ADD COLUMN win_loss TEXT;
+    `);
+  } catch (e) {
+    // Column already exists, ignore
+  }
+
+  // Add note_type to notes table
+  try {
+    db.exec(`
+      ALTER TABLE notes ADD COLUMN note_type TEXT;
+    `);
+  } catch (e) {
+    // Column already exists, ignore
+  }
+
+  // Create indexes
+  try {
+    db.exec(`
+      CREATE INDEX IF NOT EXISTS idx_games_file_path ON games(file_path);
+      CREATE INDEX IF NOT EXISTS idx_games_character ON games(character);
+      CREATE INDEX IF NOT EXISTS idx_games_opponent ON games(opponent);
+      CREATE INDEX IF NOT EXISTS idx_games_stage ON games(stage);
+      CREATE INDEX IF NOT EXISTS idx_games_win_loss ON games(win_loss);
+      CREATE INDEX IF NOT EXISTS idx_notes_game_id ON notes(game_id);
+      CREATE INDEX IF NOT EXISTS idx_notes_note_type ON notes(note_type);
+    `);
+  } catch (e) {
+    // Indexes may already exist, ignore
+  }
 
   // Attempt to create sqlite-vss virtual table/index; ignore errors if extension not loaded
   try {

@@ -8,11 +8,17 @@ export const runtime = 'nodejs';
 
 export async function POST(req: NextRequest) {
   ensureSchema();
-  const { query, k, gameId } = await req.json();
+  const { query, k, gameId, userCharacter, opponentCharacter } = await req.json();
   const db = getDb();
   
-  // Get semantic search results
-  const searchResults = await semanticSearch({ query, k: k || 10, gameId });
+  // Get semantic search results with matchup filtering
+  const searchResults = await semanticSearch({ 
+    query, 
+    k: k || 10, 
+    gameId,
+    userCharacter,
+    opponentCharacter,
+  });
   
   // Enrich results with game data and document source info
   const enrichedResults = searchResults.map((result) => {
