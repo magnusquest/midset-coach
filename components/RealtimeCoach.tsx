@@ -43,78 +43,107 @@ export default function RealtimeCoach({ userCharacter, opponentCharacter }: Prop
         throw new Error('Failed to get API token');
       }
       
-      // Connect to OpenAI Realtime API
-      const ws = new WebSocket('wss://api.openai.com/v1/realtime?model=gpt-4o-realtime-preview-2024-10-01', {
-        headers: {
-          'Authorization': `Bearer ${tokenData.token}`,
-        },
-      } as any);
+      // Connect to our WebSocket proxy (which adds Authorization header server-side)
+      // The proxy forwards to OpenAI Realtime API
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${protocol}//${window.location.host}/api/realtime/ws?token=${encodeURIComponent(tokenData.token)}`;
+      const ws = new WebSocket(wsUrl);
       
       wsRef.current = ws;
       
       ws.onopen = () => {
+        console.log('WebSocket connected, readyState:', ws.readyState);
         setIsConnected(true);
-        // Send session configuration
-        ws.send(JSON.stringify({
-          type: 'session.update',
-          session: {
-            modalities: ['text', 'audio'],
-            instructions: `You are MidSet Coach, an expert Super Smash Bros. Melee coach. The player is playing ${userCharacter || 'their character'} against ${opponentCharacter || 'an opponent'}. Provide real-time coaching advice based on their gameplay.`,
-            voice: 'alloy',
-            input_audio_format: 'pcm16',
-            output_audio_format: 'pcm16',
-            input_audio_transcription: {
-              model: 'whisper-1',
-            },
-          },
-        }));
+        
+        // Wait a tiny bit to ensure connection is fully established
+        setTimeout(() => {
+          if (ws.readyState === WebSocket.OPEN) {
+            console.log('Sending session configuration...');
+            // Send session configuration
+            ws.send(JSON.stringify({
+              type: 'session.update',
+              session: {
+                modalities: ['text', 'audio'],
+                instructions: `You are MidSet Coach, an expert Super Smash Bros. Melee coach. The player is playing ${userCharacter || 'their character'} against ${opponentCharacter || 'an opponent'}. Provide real-time coaching advice based on their gameplay.`,
+                voice: 'alloy',
+                input_audio_format: 'pcm16',
+                output_audio_format: 'pcm16',
+                input_audio_transcription: {
+                  model: 'whisper-1',
+                },
+              },
+            }));
+          } else {
+            console.warn('WebSocket not open when trying to send session config');
+          }
+        }, 100);
       };
       
       ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        
-        if (data.type === 'response.audio.delta') {
-          // Handle audio response
-          // This would require audio buffer handling
-        } else if (data.type === 'response.audio_transcript.delta') {
-          // Handle transcript delta
-          const transcript = data.delta;
-          if (transcript) {
-            setMessages(prev => {
-              const last = prev[prev.length - 1];
-              if (last && last.role === 'assistant') {
-                return [...prev.slice(0, -1), { role: 'assistant', content: last.content + transcript }];
-              }
-              return [...prev, { role: 'assistant', content: transcript }];
-            });
+        try {
+          const data = JSON.parse(event.data);
+          console.log('WebSocket message:', data.type);
+          
+          if (data.type === 'response.audio.delta') {
+            // Handle audio response
+            // This would require audio buffer handling
+          } else if (data.type === 'response.audio_transcript.delta') {
+            // Handle transcript delta
+            const transcript = data.delta;
+            if (transcript) {
+              setMessages(prev => {
+                const last = prev[prev.length - 1];
+                if (last && last.role === 'assistant') {
+                  return [...prev.slice(0, -1), { role: 'assistant', content: last.content + transcript }];
+                }
+                return [...prev, { role: 'assistant', content: transcript }];
+              });
+            }
+          } else if (data.type === 'response.audio_transcript.done') {
+            // Transcript complete
+          } else if (data.type === 'input_audio_buffer.speech_started') {
+            setIsListening(true);
+          } else if (data.type === 'input_audio_buffer.speech_stopped') {
+            setIsListening(false);
+          } else if (data.type === 'error') {
+            const errorMsg = data.error?.message || data.error || 'Unknown error';
+            console.error('OpenAI API error:', errorMsg);
+            setError(`API Error: ${errorMsg}`);
+          } else if (data.type === 'session.updated') {
+            console.log('Session updated successfully');
           }
-        } else if (data.type === 'response.audio_transcript.done') {
-          // Transcript complete
-        } else if (data.type === 'input_audio_buffer.speech_started') {
-          setIsListening(true);
-        } else if (data.type === 'input_audio_buffer.speech_stopped') {
-          setIsListening(false);
-        } else if (data.type === 'error') {
-          setError(data.error?.message || 'Unknown error');
+        } catch (err) {
+          console.error('Error parsing WebSocket message:', err);
         }
       };
       
       ws.onerror = (err) => {
         console.error('WebSocket error:', err);
-        setError('Connection error. Falling back to Web Speech API.');
-        setUseRealtime(false);
-        startWebSpeechSession();
+        // Don't immediately fall back - let onclose handle it with more context
       };
       
-      ws.onclose = () => {
+      ws.onclose = (event) => {
+        console.log('WebSocket closed:', event.code, event.reason, event.wasClean);
         setIsConnected(false);
         setIsListening(false);
+        
+        // Only fall back if it wasn't a clean close or if it was an error code
+        if (!event.wasClean || event.code !== 1000) {
+          const reason = event.reason || `Connection closed (code: ${event.code})`;
+          setError(`Connection closed: ${reason}. Falling back to Web Speech API.`);
+          setUseRealtime(false);
+          // Small delay before fallback to avoid rapid reconnection attempts
+          setTimeout(() => {
+            startWebSpeechSession();
+          }, 500);
+        }
       };
       
       // Start audio capture
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         mediaStreamRef.current = stream;
+        console.log('Microphone access granted');
         
         const audioContext = new AudioContext({ sampleRate: 24000 });
         audioContextRef.current = audioContext;
@@ -124,28 +153,39 @@ export default function RealtimeCoach({ userCharacter, opponentCharacter }: Prop
         
         processor.onaudioprocess = (e) => {
           if (ws.readyState === WebSocket.OPEN) {
-            const audioData = e.inputBuffer.getChannelData(0);
-            const pcm16 = new Int16Array(audioData.length);
-            for (let i = 0; i < audioData.length; i++) {
-              pcm16[i] = Math.max(-32768, Math.min(32767, audioData[i] * 32768));
+            try {
+              const audioData = e.inputBuffer.getChannelData(0);
+              const pcm16 = new Int16Array(audioData.length);
+              for (let i = 0; i < audioData.length; i++) {
+                pcm16[i] = Math.max(-32768, Math.min(32767, audioData[i] * 32768));
+              }
+              
+              ws.send(JSON.stringify({
+                type: 'input_audio_buffer.append',
+                audio: Array.from(pcm16),
+              }));
+              
+              ws.send(JSON.stringify({
+                type: 'input_audio_buffer.commit',
+              }));
+            } catch (audioProcessErr) {
+              console.error('Error processing audio:', audioProcessErr);
             }
-            
-            ws.send(JSON.stringify({
-              type: 'input_audio_buffer.append',
-              audio: Array.from(pcm16),
-            }));
-            
-            ws.send(JSON.stringify({
-              type: 'input_audio_buffer.commit',
-            }));
           }
         };
         
         source.connect(processor);
         processor.connect(audioContext.destination);
-      } catch (audioErr) {
+        console.log('Audio processing started');
+      } catch (audioErr: any) {
         console.error('Failed to start audio capture:', audioErr);
-        setError('Failed to access microphone');
+        const errorMsg = audioErr.name === 'NotAllowedError' 
+          ? 'Microphone access denied. Please allow microphone access and try again.'
+          : audioErr.name === 'NotFoundError'
+          ? 'No microphone found. Please connect a microphone and try again.'
+          : `Failed to access microphone: ${audioErr.message || 'Unknown error'}`;
+        setError(errorMsg);
+        // Don't close the WebSocket if audio fails - text-only mode might still work
       }
       
     } catch (err: any) {
