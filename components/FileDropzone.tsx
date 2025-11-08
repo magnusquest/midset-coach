@@ -157,19 +157,19 @@ export default function FileDropzone() {
         style={{
           padding: 20,
           borderRadius: 12,
-          background: 'linear-gradient(135deg, #f0f9f0 0%, #f5f0ff 100%)',
-          border: '2px solid #d4f2d4',
+        background: '#24283b',
+        border: '1px solid #3b4261',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
         }}
       >
         <div>
-          <p style={{ margin: 0, color: '#52b052', fontSize: 14, fontWeight: 600 }}>
+          <p style={{ margin: 0, color: '#9ece6a', fontSize: 14, fontWeight: 600 }}>
             Watching folder: {selectedFolder}
           </p>
           {watching && (
-            <p style={{ margin: '4px 0 0 0', color: '#7dd87d', fontSize: 12 }}>
+            <p style={{ margin: '4px 0 0 0', color: '#7aa2f7', fontSize: 12 }}>
               Auto-loading new games...
             </p>
           )}
@@ -188,9 +188,9 @@ export default function FileDropzone() {
             padding: '8px 16px',
             fontSize: 13,
             fontWeight: 600,
-            background: 'white',
-            color: '#6b46c1',
-            border: '2px solid #c5b8fa',
+            background: '#24283b',
+            color: '#c0caf5',
+            border: '1px solid #3b4261',
             borderRadius: 8,
             cursor: 'pointer',
           }}
@@ -204,12 +204,12 @@ export default function FileDropzone() {
   return (
     <div
       style={{
-        border: '3px dashed #c5b8fa',
-        padding: 28,
-        borderRadius: 16,
-        background: 'linear-gradient(135deg, #f5f0ff 0%, #f0f9f0 100%)',
-        textAlign: 'center',
-        boxShadow: '0 4px 12px rgba(155, 135, 245, 0.15)',
+      border: '2px dashed #3b4261',
+      padding: 28,
+      borderRadius: 16,
+      background: '#24283b',
+      textAlign: 'center',
+      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
       }}
     >
       <button
@@ -219,28 +219,28 @@ export default function FileDropzone() {
           padding: '14px 32px',
           fontSize: 16,
           fontWeight: 700,
-          background: isLoading 
-            ? 'linear-gradient(135deg, #c5b8fa 0%, #aee8ae 100%)'
-            : 'linear-gradient(135deg, #9b87f5 0%, #7dd87d 100%)',
-          color: 'white',
+            background: isLoading 
+            ? '#565f89'
+            : '#7aa2f7',
+          color: isLoading ? '#565f89' : '#1a1b26',
           border: 'none',
           borderRadius: 12,
           cursor: isLoading ? 'not-allowed' : 'pointer',
           marginBottom: 16,
-          boxShadow: isLoading ? 'none' : '0 4px 12px rgba(155, 135, 245, 0.3)',
+            boxShadow: isLoading ? 'none' : '0 4px 12px rgba(122, 162, 247, 0.3)',
           transition: 'all 0.3s ease',
           transform: isLoading ? 'none' : 'scale(1)',
         }}
         onMouseEnter={(e) => {
           if (!isLoading) {
             e.currentTarget.style.transform = 'scale(1.05)';
-            e.currentTarget.style.boxShadow = '0 6px 16px rgba(155, 135, 245, 0.4)';
+            e.currentTarget.style.boxShadow = '0 6px 16px rgba(122, 162, 247, 0.4)';
           }
         }}
         onMouseLeave={(e) => {
           if (!isLoading) {
             e.currentTarget.style.transform = 'scale(1)';
-            e.currentTarget.style.boxShadow = '0 4px 12px rgba(155, 135, 245, 0.3)';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(122, 162, 247, 0.3)';
           }
         }}
       >
@@ -248,19 +248,19 @@ export default function FileDropzone() {
       </button>
       
       {isLoading && fileCount !== null && (
-        <p style={{ margin: '8px 0 0 0', color: '#6b46c1', fontSize: 15, fontWeight: 500 }}>
+        <p style={{ margin: '8px 0 0 0', color: '#c0caf5', fontSize: 15, fontWeight: 500 }}>
           Found {fileCount} .slp file{fileCount !== 1 ? 's' : ''}...
         </p>
       )}
       
       {!isLoading && (
-        <p style={{ margin: '8px 0 0 0', color: '#6b46c1', fontSize: 14, fontWeight: 500 }}>
+        <p style={{ margin: '8px 0 0 0', color: '#a9b1d6', fontSize: 14, fontWeight: 500 }}>
           Click to browse and import all .slp files from a folder
         </p>
       )}
       
       {isSupported === false && (
-        <p style={{ margin: '12px 0 0 0', color: '#f59e0b', fontSize: 12, fontWeight: 500, padding: '8px 12px', background: '#fff5e6', borderRadius: 8, border: '1px solid #fbbf24' }}>
+        <p style={{ margin: '12px 0 0 0', color: '#f7768e', fontSize: 12, fontWeight: 500, padding: '8px 12px', background: '#1a1b26', borderRadius: 8, border: '1px solid #f7768e' }}>
           ⚠ Folder selection requires a Chromium-based browser (Chrome, Edge, etc.)
         </p>
       )}

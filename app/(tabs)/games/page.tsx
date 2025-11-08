@@ -73,7 +73,7 @@ export default function GamesPage() {
         margin: 0, 
         fontSize: 32, 
         fontWeight: 800, 
-        background: 'linear-gradient(135deg, #9b87f5 0%, #7dd87d 100%)',
+        background: 'linear-gradient(135deg, #7aa2f7 0%, #9ece6a 100%)',
         WebkitBackgroundClip: 'text',
         WebkitTextFillColor: 'transparent',
         backgroundClip: 'text',
@@ -87,9 +87,9 @@ export default function GamesPage() {
         gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
         gap: 12,
         padding: 16,
-        background: 'white',
+        background: '#24283b',
         borderRadius: 12,
-        border: '2px solid #e8e0ff',
+        border: '1px solid #3b4261',
       }}>
         <div>
           <label style={{ display: 'block', marginBottom: 4, fontSize: 12, fontWeight: 600, color: '#6b46c1' }}>
@@ -102,10 +102,10 @@ export default function GamesPage() {
               width: '100%',
               padding: '8px 12px',
               borderRadius: 8,
-              border: '2px solid #c5b8fa',
+              border: '1px solid #3b4261',
               fontSize: 14,
-              background: 'white',
-              color: '#4a5568',
+              background: '#24283b',
+              color: '#c0caf5',
             }}
           >
             <option value="">All</option>
@@ -132,10 +132,10 @@ export default function GamesPage() {
               width: '100%',
               padding: '8px 12px',
               borderRadius: 8,
-              border: '2px solid #c5b8fa',
+              border: '1px solid #3b4261',
               fontSize: 14,
-              background: 'white',
-              color: '#4a5568',
+              background: '#24283b',
+              color: '#c0caf5',
             }}
           >
             <option value="">All</option>
@@ -162,10 +162,10 @@ export default function GamesPage() {
               width: '100%',
               padding: '8px 12px',
               borderRadius: 8,
-              border: '2px solid #c5b8fa',
+              border: '1px solid #3b4261',
               fontSize: 14,
-              background: 'white',
-              color: '#4a5568',
+              background: '#24283b',
+              color: '#c0caf5',
             }}
           >
             <option value="">All</option>
@@ -188,10 +188,10 @@ export default function GamesPage() {
               width: '100%',
               padding: '8px 12px',
               borderRadius: 8,
-              border: '2px solid #c5b8fa',
+              border: '1px solid #3b4261',
               fontSize: 14,
-              background: 'white',
-              color: '#4a5568',
+              background: '#24283b',
+              color: '#c0caf5',
             }}
           >
             <option value="">All</option>
@@ -210,10 +210,10 @@ export default function GamesPage() {
               width: '100%',
               padding: '8px 12px',
               borderRadius: 8,
-              border: '2px solid #c5b8fa',
+              border: '1px solid #3b4261',
               fontSize: 14,
-              background: 'white',
-              color: '#4a5568',
+              background: '#24283b',
+              color: '#c0caf5',
             }}
           >
             <option value="date">Date</option>
@@ -235,10 +235,10 @@ export default function GamesPage() {
               width: '100%',
               padding: '8px 12px',
               borderRadius: 8,
-              border: '2px solid #c5b8fa',
+              border: '1px solid #3b4261',
               fontSize: 14,
-              background: 'white',
-              color: '#4a5568',
+              background: '#24283b',
+              color: '#c0caf5',
             }}
           >
             <option value="DESC">Newest First</option>
@@ -252,12 +252,12 @@ export default function GamesPage() {
         <div style={{ 
           padding: '24px', 
           textAlign: 'center', 
-          color: '#6b46c1', 
+          color: '#c0caf5', 
           fontSize: 16, 
           fontWeight: 500,
-          background: 'white',
+          background: '#24283b',
           borderRadius: 12,
-          border: '2px solid #e8e0ff',
+          border: '1px solid #3b4261',
         }}>
           Loading games...
         </div>
@@ -267,11 +267,11 @@ export default function GamesPage() {
             <div style={{ 
               padding: '32px', 
               textAlign: 'center', 
-              color: '#6b46c1', 
+              color: '#c0caf5', 
               fontSize: 16, 
-              background: 'white',
+              background: '#24283b',
               borderRadius: 12,
-              border: '2px dashed #c5b8fa',
+              border: '2px dashed #3b4261',
             }}>
               No games found. Import some Slippi files to get started!
             </div>

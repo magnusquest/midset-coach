@@ -54,7 +54,7 @@ export default function CoachPage() {
         margin: 0, 
         fontSize: 32, 
         fontWeight: 800, 
-        background: 'linear-gradient(135deg, #9b87f5 0%, #7dd87d 100%)',
+        background: 'linear-gradient(135deg, #7aa2f7 0%, #9ece6a 100%)',
         WebkitBackgroundClip: 'text',
         WebkitTextFillColor: 'transparent',
         backgroundClip: 'text',
@@ -72,11 +72,11 @@ export default function CoachPage() {
       {contextLoading && (
         <div style={{
           padding: 12,
-          background: '#f5f0ff',
+          background: '#24283b',
           borderRadius: 8,
-          border: '2px solid #c5b8fa',
+          border: '1px solid #3b4261',
           textAlign: 'center',
-          color: '#6b46c1',
+          color: '#c0caf5',
           fontSize: 14,
         }}>
           Loading context for matchup...
@@ -86,11 +86,11 @@ export default function CoachPage() {
       {contextLoaded && !contextLoading && (
         <div style={{
           padding: 12,
-          background: '#f0f9f0',
+          background: '#1a1b26',
           borderRadius: 8,
-          border: '2px solid #d4f2d4',
+          border: '1px solid #3b4261',
           textAlign: 'center',
-          color: '#52b052',
+          color: '#9ece6a',
           fontSize: 14,
         }}>
           ✓ Context loaded for this matchup

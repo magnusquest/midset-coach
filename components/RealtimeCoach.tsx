@@ -236,18 +236,18 @@ export default function RealtimeCoach({ userCharacter, opponentCharacter }: Prop
     <div style={{ display: 'grid', gap: 16 }}>
       <div style={{
         padding: 16,
-        background: 'white',
+        background: '#24283b',
         borderRadius: 12,
-        border: '2px solid #e8e0ff',
+        border: '1px solid #3b4261',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
       }}>
         <div>
-          <strong style={{ color: '#6b46c1', fontSize: 14, display: 'block', marginBottom: 4 }}>
+          <strong style={{ color: '#c0caf5', fontSize: 14, display: 'block', marginBottom: 4 }}>
             Realtime Voice Coach
           </strong>
-          <span style={{ color: '#95a5a6', fontSize: 12 }}>
+          <span style={{ color: '#565f89', fontSize: 12 }}>
             {useRealtime ? 'Using OpenAI Realtime API' : 'Using Web Speech API (fallback)'}
           </span>
         </div>
@@ -258,8 +258,8 @@ export default function RealtimeCoach({ userCharacter, opponentCharacter }: Prop
               padding: '10px 20px',
               fontSize: 14,
               fontWeight: 600,
-              background: 'linear-gradient(135deg, #9b87f5 0%, #7dd87d 100%)',
-              color: 'white',
+              background: '#7aa2f7',
+              color: '#1a1b26',
               border: 'none',
               borderRadius: 8,
               cursor: 'pointer',
@@ -274,8 +274,8 @@ export default function RealtimeCoach({ userCharacter, opponentCharacter }: Prop
               padding: '10px 20px',
               fontSize: 14,
               fontWeight: 600,
-              background: 'linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)',
-              color: 'white',
+              background: '#f7768e',
+              color: '#1a1b26',
               border: 'none',
               borderRadius: 8,
               cursor: 'pointer',
@@ -289,11 +289,11 @@ export default function RealtimeCoach({ userCharacter, opponentCharacter }: Prop
       {isListening && (
         <div style={{
           padding: 12,
-          background: '#f0f9f0',
+          background: '#1a1b26',
           borderRadius: 8,
-          border: '2px solid #d4f2d4',
+          border: '1px solid #3b4261',
           textAlign: 'center',
-          color: '#52b052',
+          color: '#9ece6a',
           fontSize: 14,
         }}>
           🎤 Listening...
@@ -303,10 +303,10 @@ export default function RealtimeCoach({ userCharacter, opponentCharacter }: Prop
       {error && (
         <div style={{
           padding: 12,
-          background: '#fff5e6',
+          background: '#1a1b26',
           borderRadius: 8,
-          border: '1px solid #fbbf24',
-          color: '#f59e0b',
+          border: '1px solid #f7768e',
+          color: '#f7768e',
           fontSize: 12,
         }}>
           {error}
@@ -315,13 +315,13 @@ export default function RealtimeCoach({ userCharacter, opponentCharacter }: Prop
       
       {messages.length > 0 && (
         <div style={{
-          border: '2px solid #c5b8fa',
+          border: '1px solid #3b4261',
           borderRadius: 12,
           padding: 20,
           minHeight: 300,
           maxHeight: 500,
           overflow: 'auto',
-          background: 'linear-gradient(135deg, #ffffff 0%, #f5f0ff 100%)',
+          background: '#24283b',
         }}>
           {messages.map((m, i) => (
             <div
@@ -331,13 +331,13 @@ export default function RealtimeCoach({ userCharacter, opponentCharacter }: Prop
                 padding: '12px 16px',
                 borderRadius: 8,
                 background: m.role === 'user'
-                  ? 'linear-gradient(135deg, #e8e0ff 0%, #f0f9f0 100%)'
-                  : 'linear-gradient(135deg, #f0f9f0 0%, #e8e0ff 100%)',
-                border: `2px solid ${m.role === 'user' ? '#c5b8fa' : '#d4f2d4'}`,
+                  ? '#2f3549'
+                  : '#1a1b26',
+                border: `1px solid ${m.role === 'user' ? '#3b4261' : '#565f89'}`,
               }}
             >
               <strong style={{
-                color: m.role === 'user' ? '#9b87f5' : '#7dd87d',
+                color: m.role === 'user' ? '#7aa2f7' : '#9ece6a',
                 fontSize: 14,
                 display: 'block',
                 marginBottom: 6,
@@ -345,7 +345,7 @@ export default function RealtimeCoach({ userCharacter, opponentCharacter }: Prop
                 {m.role === 'user' ? 'You' : '🎓 Coach'}:
               </strong>
               <div style={{
-                color: '#4a5568',
+                color: '#c0caf5',
                 fontSize: 14,
                 lineHeight: 1.6,
                 whiteSpace: 'pre-wrap',
