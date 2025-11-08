@@ -17,7 +17,7 @@ export default function RootLayout({
       <body style={{ 
         margin: 0, 
         padding: 0,
-        background: 'linear-gradient(135deg, #faf5ff 0%, #f0fff0 100%)',
+        background: '#1a1b26',
         minHeight: '100vh',
       }}>
         <Header />

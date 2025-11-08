@@ -60,19 +60,19 @@ export default function ChatUI({ userCharacter, opponentCharacter }: Props) {
   return (
     <div style={{ display: 'grid', gap: 16 }}>
       <div style={{ 
-        border: '2px solid #c5b8fa', 
+        border: '1px solid #3b4261', 
         borderRadius: 12, 
         padding: 20, 
         minHeight: 300,
         maxHeight: 500,
         overflow: 'auto',
-        background: 'linear-gradient(135deg, #ffffff 0%, #f5f0ff 100%)',
-        boxShadow: '0 2px 8px rgba(155, 135, 245, 0.1)',
+        background: '#24283b',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
       }}>
         {messages.length === 0 ? (
           <div style={{ 
             textAlign: 'center', 
-            color: '#9b87f5', 
+            color: '#7aa2f7', 
             fontSize: 15, 
             padding: '40px 20px',
             fontStyle: 'italic',
@@ -88,13 +88,13 @@ export default function ChatUI({ userCharacter, opponentCharacter }: Props) {
                 padding: '12px 16px',
                 borderRadius: 8,
                 background: m.role === 'user' 
-                  ? 'linear-gradient(135deg, #e8e0ff 0%, #f0f9f0 100%)'
-                  : 'linear-gradient(135deg, #f0f9f0 0%, #e8e0ff 100%)',
-                border: `2px solid ${m.role === 'user' ? '#c5b8fa' : '#d4f2d4'}`,
+                  ? '#2f3549'
+                  : '#1a1b26',
+                border: `1px solid ${m.role === 'user' ? '#3b4261' : '#565f89'}`,
               }}
             >
               <strong style={{ 
-                color: m.role === 'user' ? '#9b87f5' : '#7dd87d', 
+                color: m.role === 'user' ? '#7aa2f7' : '#9ece6a', 
                 fontSize: 14,
                 display: 'block',
                 marginBottom: 6,
@@ -102,7 +102,7 @@ export default function ChatUI({ userCharacter, opponentCharacter }: Props) {
                 {m.role === 'user' ? 'You' : '🎓 Coach'}:
               </strong>
               <div style={{ 
-                color: '#4a5568', 
+                color: '#c0caf5', 
                 fontSize: 14, 
                 lineHeight: 1.6,
                 whiteSpace: 'pre-wrap',
@@ -128,18 +128,18 @@ export default function ChatUI({ userCharacter, opponentCharacter }: Props) {
             flex: 1,
             padding: '12px 16px',
             borderRadius: 10,
-            border: '2px solid #c5b8fa',
+            border: '1px solid #3b4261',
             fontSize: 14,
             fontFamily: 'inherit',
-            background: 'white',
-            color: '#4a5568',
+            background: '#24283b',
+            color: '#c0caf5',
             transition: 'border-color 0.2s',
           }}
           onFocus={(e) => {
-            e.currentTarget.style.borderColor = '#9b87f5';
+            e.currentTarget.style.borderColor = '#7aa2f7';
           }}
           onBlur={(e) => {
-            e.currentTarget.style.borderColor = '#c5b8fa';
+            e.currentTarget.style.borderColor = '#3b4261';
           }}
         />
         <button 
@@ -150,25 +150,25 @@ export default function ChatUI({ userCharacter, opponentCharacter }: Props) {
             fontSize: 14,
             fontWeight: 600,
             background: input.trim()
-              ? 'linear-gradient(135deg, #9b87f5 0%, #7dd87d 100%)'
-              : 'linear-gradient(135deg, #c5b8fa 0%, #aee8ae 100%)',
-            color: 'white',
+              ? '#7aa2f7'
+              : '#565f89',
+            color: input.trim() ? '#1a1b26' : '#565f89',
             border: 'none',
             borderRadius: 10,
             cursor: input.trim() ? 'pointer' : 'not-allowed',
             transition: 'all 0.2s',
-            boxShadow: input.trim() ? '0 2px 8px rgba(155, 135, 245, 0.3)' : 'none',
+            boxShadow: input.trim() ? '0 2px 8px rgba(122, 162, 247, 0.3)' : 'none',
           }}
           onMouseEnter={(e) => {
             if (input.trim()) {
               e.currentTarget.style.transform = 'scale(1.02)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(155, 135, 245, 0.4)';
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(122, 162, 247, 0.4)';
             }
           }}
           onMouseLeave={(e) => {
             if (input.trim()) {
               e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.boxShadow = '0 2px 8px rgba(155, 135, 245, 0.3)';
+              e.currentTarget.style.boxShadow = '0 2px 8px rgba(122, 162, 247, 0.3)';
             }
           }}
         >
@@ -180,21 +180,21 @@ export default function ChatUI({ userCharacter, opponentCharacter }: Props) {
             padding: '12px 20px',
             fontSize: 14,
             fontWeight: 600,
-            background: 'linear-gradient(135deg, #7dd87d 0%, #9b87f5 100%)',
-            color: 'white',
+            background: '#9ece6a',
+            color: '#1a1b26',
             border: 'none',
             borderRadius: 10,
             cursor: 'pointer',
             transition: 'all 0.2s',
-            boxShadow: '0 2px 8px rgba(125, 216, 125, 0.3)',
+            boxShadow: '0 2px 8px rgba(158, 206, 106, 0.3)',
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.transform = 'scale(1.02)';
-            e.currentTarget.style.boxShadow = '0 4px 12px rgba(125, 216, 125, 0.4)';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(158, 206, 106, 0.4)';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.transform = 'scale(1)';
-            e.currentTarget.style.boxShadow = '0 2px 8px rgba(125, 216, 125, 0.3)';
+            e.currentTarget.style.boxShadow = '0 2px 8px rgba(158, 206, 106, 0.3)';
           }}
         >
           🎤 Voice

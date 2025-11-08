@@ -128,12 +128,12 @@ function ReviewPageContent() {
       <div style={{ 
         padding: '24px', 
         textAlign: 'center', 
-        color: '#6b46c1', 
+        color: '#c0caf5', 
         fontSize: 16, 
         fontWeight: 500,
-        background: 'white',
+        background: '#24283b',
         borderRadius: 12,
-        border: '2px solid #e8e0ff',
+        border: '1px solid #3b4261',
       }}>
         Loading...
       </div>
@@ -143,15 +143,35 @@ function ReviewPageContent() {
   if (!game) {
     return (
       <div style={{ 
-        padding: '32px', 
-        textAlign: 'center', 
-        color: '#6b46c1', 
-        fontSize: 16, 
-        background: 'white',
-        borderRadius: 12,
-        border: '2px dashed #c5b8fa',
+        display: 'grid', 
+        gap: 24, 
+        padding: '24px',
+        maxWidth: 1200,
+        margin: '0 auto',
+        width: '100%',
       }}>
-        No game selected. Select a game from the Games tab.
+        <h2 style={{ 
+          margin: 0, 
+          fontSize: 32, 
+          fontWeight: 800, 
+          background: 'linear-gradient(135deg, #7aa2f7 0%, #9ece6a 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+        }}>
+          Review
+        </h2>
+        <div style={{ 
+          padding: '20px', 
+          textAlign: 'center', 
+          color: '#c0caf5', 
+          fontSize: 16, 
+          background: '#24283b',
+          borderRadius: 12,
+          border: '2px dashed #3b4261',
+        }}>
+          No game selected. Select a game from the Games tab.
+        </div>
       </div>
     );
   }
@@ -174,7 +194,7 @@ function ReviewPageContent() {
         margin: 0, 
         fontSize: 32, 
         fontWeight: 800, 
-        background: 'linear-gradient(135deg, #9b87f5 0%, #7dd87d 100%)',
+        background: 'linear-gradient(135deg, #7aa2f7 0%, #9ece6a 100%)',
         WebkitBackgroundClip: 'text',
         WebkitTextFillColor: 'transparent',
         backgroundClip: 'text',
@@ -185,9 +205,9 @@ function ReviewPageContent() {
       {/* Game Selector */}
       <div style={{
         padding: 16,
-        background: 'white',
+        background: '#24283b',
         borderRadius: 12,
-        border: '2px solid #e8e0ff',
+        border: '1px solid #3b4261',
       }}>
         <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 600, color: '#6b46c1' }}>
           Select Game
@@ -202,10 +222,10 @@ function ReviewPageContent() {
             width: '100%',
             padding: '10px 12px',
             borderRadius: 8,
-            border: '2px solid #c5b8fa',
+            border: '1px solid #3b4261',
             fontSize: 14,
-            background: 'white',
-            color: '#4a5568',
+            background: '#24283b',
+            color: '#c0caf5',
           }}
         >
           {games.map((g) => (
@@ -219,9 +239,9 @@ function ReviewPageContent() {
       {/* Game Info */}
       <div style={{
         padding: 20,
-        background: 'linear-gradient(135deg, #f5f0ff 0%, #f0f9f0 100%)',
+        background: '#1a1b26',
         borderRadius: 12,
-        border: '2px solid #e8e0ff',
+        border: '1px solid #3b4261',
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: 16 }}>
           <h3 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: '#6b46c1' }}>
@@ -262,9 +282,9 @@ function ReviewPageContent() {
       {/* Review Notes */}
       <div style={{
         padding: 20,
-        background: 'white',
+        background: '#24283b',
         borderRadius: 12,
-        border: '2px solid #e8e0ff',
+        border: '1px solid #3b4261',
       }}>
         <h3 style={{ margin: '0 0 16px 0', fontSize: 18, fontWeight: 700, color: '#6b46c1' }}>
           Review Notes
@@ -278,9 +298,9 @@ function ReviewPageContent() {
                 key={note.id}
                 style={{
                   padding: 12,
-                  background: '#f5f0ff',
+                  background: '#1a1b26',
                   borderRadius: 8,
-                  border: '1px solid #e8e0ff',
+                  border: '1px solid #3b4261',
                 }}
               >
                 <div style={{ fontSize: 14, color: '#4a5568', whiteSpace: 'pre-wrap', marginBottom: 6 }}>
@@ -304,12 +324,12 @@ function ReviewPageContent() {
             width: '100%',
             padding: '12px',
             borderRadius: 8,
-            border: '2px solid #c5b8fa',
+            border: '1px solid #3b4261',
             fontSize: 14,
             fontFamily: 'inherit',
             resize: 'vertical',
-            background: 'white',
-            color: '#4a5568',
+            background: '#24283b',
+            color: '#c0caf5',
             marginBottom: 12,
           }}
         />
@@ -322,9 +342,9 @@ function ReviewPageContent() {
             fontSize: 14,
             fontWeight: 600,
             background: noteContent.trim() && !saving
-              ? 'linear-gradient(135deg, #9b87f5 0%, #7dd87d 100%)'
-              : 'linear-gradient(135deg, #c5b8fa 0%, #aee8ae 100%)',
-            color: 'white',
+              ? '#7aa2f7'
+              : '#565f89',
+            color: noteContent.trim() && !saving ? '#1a1b26' : '#565f89',
             border: 'none',
             borderRadius: 8,
             cursor: noteContent.trim() && !saving ? 'pointer' : 'not-allowed',
@@ -344,12 +364,12 @@ export default function ReviewPage() {
       <div style={{ 
         padding: '24px', 
         textAlign: 'center', 
-        color: '#6b46c1', 
+        color: '#c0caf5', 
         fontSize: 16, 
         fontWeight: 500,
-        background: 'white',
+        background: '#24283b',
         borderRadius: 12,
-        border: '2px solid #e8e0ff',
+        border: '1px solid #3b4261',
       }}>
         Loading...
       </div>

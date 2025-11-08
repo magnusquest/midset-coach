@@ -37,15 +37,15 @@ export default function MatchupSelector({
   return (
     <div style={{
       padding: 20,
-      background: 'linear-gradient(135deg, #f5f0ff 0%, #f0f9f0 100%)',
+      background: '#24283b',
       borderRadius: 12,
-      border: '2px solid #e8e0ff',
+      border: '1px solid #3b4261',
       display: 'grid',
       gridTemplateColumns: '1fr 1fr',
       gap: 16,
     }}>
       <div>
-        <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 600, color: '#6b46c1' }}>
+        <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 600, color: '#c0caf5' }}>
           Your Character
         </label>
         <select
@@ -55,10 +55,10 @@ export default function MatchupSelector({
             width: '100%',
             padding: '10px 12px',
             borderRadius: 8,
-            border: '2px solid #c5b8fa',
+            border: '1px solid #3b4261',
             fontSize: 14,
-            background: 'white',
-            color: '#4a5568',
+            background: '#1a1b26',
+            color: '#c0caf5',
           }}
         >
           <option value="">Select character...</option>
@@ -70,7 +70,7 @@ export default function MatchupSelector({
         </select>
       </div>
       <div>
-        <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 600, color: '#6b46c1' }}>
+        <label style={{ display: 'block', marginBottom: 8, fontSize: 14, fontWeight: 600, color: '#c0caf5' }}>
           Opponent Character
         </label>
         <select
@@ -80,10 +80,10 @@ export default function MatchupSelector({
             width: '100%',
             padding: '10px 12px',
             borderRadius: 8,
-            border: '2px solid #c5b8fa',
+            border: '1px solid #3b4261',
             fontSize: 14,
-            background: 'white',
-            color: '#4a5568',
+            background: '#1a1b26',
+            color: '#c0caf5',
           }}
         >
           <option value="">Select character...</option>
@@ -98,12 +98,12 @@ export default function MatchupSelector({
         <div style={{
           gridColumn: '1 / -1',
           padding: 12,
-          background: 'white',
+          background: '#1a1b26',
           borderRadius: 8,
-          border: '2px solid #d4f2d4',
+          border: '1px solid #3b4261',
           textAlign: 'center',
         }}>
-          <strong style={{ color: '#52b052', fontSize: 16 }}>
+          <strong style={{ color: '#9ece6a', fontSize: 16 }}>
             {getCharacterName(userCharacter)} vs {getCharacterName(opponentCharacter)}
           </strong>
         </div>

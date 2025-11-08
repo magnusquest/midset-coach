@@ -45,9 +45,9 @@ export default function ReplayLauncher({ filePath, gameId }: Props) {
           fontSize: 14,
           fontWeight: 600,
           background: launching
-            ? 'linear-gradient(135deg, #c5b8fa 0%, #aee8ae 100%)'
-            : 'linear-gradient(135deg, #9b87f5 0%, #7dd87d 100%)',
-          color: 'white',
+            ? '#565f89'
+            : '#7aa2f7',
+          color: launching ? '#565f89' : '#1a1b26',
           border: 'none',
           borderRadius: 8,
           cursor: launching ? 'not-allowed' : 'pointer',
@@ -59,10 +59,10 @@ export default function ReplayLauncher({ filePath, gameId }: Props) {
       {error && (
         <div style={{ 
           padding: '8px 12px', 
-          background: '#fff5e6', 
+          background: '#1a1b26', 
           borderRadius: 8, 
-          border: '1px solid #fbbf24',
-          color: '#f59e0b',
+          border: '1px solid #f7768e',
+          color: '#f7768e',
           fontSize: 12,
         }}>
           {error}

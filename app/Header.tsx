@@ -4,15 +4,10 @@ import { usePathname } from 'next/navigation';
 
 export default function Header() {
   const pathname = usePathname();
-  const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [clearing, setClearing] = useState(false);
 
   async function handleClearDatabase() {
-    if (!showClearConfirm) {
-      setShowClearConfirm(true);
-      return;
-    }
-
     setClearing(true);
     try {
       const res = await fetch('/api/clear', { method: 'POST' });
@@ -29,194 +24,259 @@ export default function Header() {
       alert('Failed to clear database');
     } finally {
       setClearing(false);
-      setShowClearConfirm(false);
+      setShowModal(false);
     }
   }
 
   return (
-    <header style={{ 
-      padding: '20px 24px', 
-      borderBottom: '2px solid #e8e0ff',
-      background: 'linear-gradient(135deg, #ffffff 0%, #f5f0ff 100%)',
-      boxShadow: '0 2px 8px rgba(155, 135, 245, 0.1)',
-    }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: 1200, margin: '0 auto' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-          <h1 style={{ 
-            margin: 0, 
-            fontSize: 28,
-            fontWeight: 800,
-            background: 'linear-gradient(135deg, #9b87f5 0%, #7dd87d 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-          }}>
-            MidSet Coach
-          </h1>
-          <nav style={{ display: 'flex', gap: 8 }}>
-            <a 
-              href="/games"
-              style={{
-                padding: '8px 16px',
-                borderRadius: 8,
-                textDecoration: 'none',
-                fontSize: 15,
-                fontWeight: 600,
-                transition: 'all 0.2s',
-                background: pathname === '/games' 
-                  ? 'linear-gradient(135deg, #9b87f5 0%, #7dd87d 100%)'
-                  : 'transparent',
-                color: pathname === '/games' ? 'white' : '#6b46c1',
-                border: pathname === '/games' ? 'none' : '2px solid #c5b8fa',
-              }}
-              onMouseEnter={(e) => {
-                if (pathname !== '/games') {
-                  e.currentTarget.style.background = '#f5f0ff';
-                  e.currentTarget.style.borderColor = '#9b87f5';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (pathname !== '/games') {
-                  e.currentTarget.style.background = 'transparent';
-                  e.currentTarget.style.borderColor = '#c5b8fa';
-                }
-              }}
-            >
-              Games
-            </a>
-            <a 
-              href="/review"
-              style={{
-                padding: '8px 16px',
-                borderRadius: 8,
-                textDecoration: 'none',
-                fontSize: 15,
-                fontWeight: 600,
-                transition: 'all 0.2s',
-                background: pathname === '/review' 
-                  ? 'linear-gradient(135deg, #9b87f5 0%, #7dd87d 100%)'
-                  : 'transparent',
-                color: pathname === '/review' ? 'white' : '#6b46c1',
-                border: pathname === '/review' ? 'none' : '2px solid #c5b8fa',
-              }}
-              onMouseEnter={(e) => {
-                if (pathname !== '/review') {
-                  e.currentTarget.style.background = '#f5f0ff';
-                  e.currentTarget.style.borderColor = '#9b87f5';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (pathname !== '/review') {
-                  e.currentTarget.style.background = 'transparent';
-                  e.currentTarget.style.borderColor = '#c5b8fa';
-                }
-              }}
-            >
-              Review
-            </a>
-            <a 
-              href="/coach"
-              style={{
-                padding: '8px 16px',
-                borderRadius: 8,
-                textDecoration: 'none',
-                fontSize: 15,
-                fontWeight: 600,
-                transition: 'all 0.2s',
-                background: pathname === '/coach' 
-                  ? 'linear-gradient(135deg, #9b87f5 0%, #7dd87d 100%)'
-                  : 'transparent',
-                color: pathname === '/coach' ? 'white' : '#6b46c1',
-                border: pathname === '/coach' ? 'none' : '2px solid #c5b8fa',
-              }}
-              onMouseEnter={(e) => {
-                if (pathname !== '/coach') {
-                  e.currentTarget.style.background = '#f5f0ff';
-                  e.currentTarget.style.borderColor = '#9b87f5';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (pathname !== '/coach') {
-                  e.currentTarget.style.background = 'transparent';
-                  e.currentTarget.style.borderColor = '#c5b8fa';
-                }
-              }}
-            >
-              Coach
-            </a>
-          </nav>
-        </div>
-        
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          {showClearConfirm ? (
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <span style={{ fontSize: 13, color: '#f59e0b', fontWeight: 500 }}>
-                Confirm clear?
-              </span>
-              <button
-                onClick={handleClearDatabase}
-                disabled={clearing}
+    <>
+      <header style={{ 
+        padding: '20px 24px', 
+        borderBottom: '2px solid #3b4261',
+        background: '#24283b',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: 1200, margin: '0 auto' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+            <h1 style={{ 
+              margin: 0, 
+              fontSize: 28,
+              fontWeight: 800,
+              background: 'linear-gradient(135deg, #7aa2f7 0%, #9ece6a 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}>
+              MidSet Coach
+            </h1>
+            <nav style={{ display: 'flex', gap: 8 }}>
+              <a 
+                href="/games"
                 style={{
-                  padding: '6px 12px',
-                  fontSize: 12,
+                  padding: '8px 16px',
+                  borderRadius: 8,
+                  textDecoration: 'none',
+                  fontSize: 15,
                   fontWeight: 600,
-                  background: clearing 
-                    ? 'linear-gradient(135deg, #c5b8fa 0%, #aee8ae 100%)'
-                    : 'linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: 6,
-                  cursor: clearing ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.2s',
+                  background: pathname === '/games' 
+                    ? '#7aa2f7'
+                    : 'transparent',
+                  color: pathname === '/games' ? '#1a1b26' : '#c0caf5',
+                  border: pathname === '/games' ? 'none' : '1px solid #3b4261',
+                }}
+                onMouseEnter={(e) => {
+                  if (pathname !== '/games') {
+                    e.currentTarget.style.background = '#2f3549';
+                    e.currentTarget.style.borderColor = '#7aa2f7';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (pathname !== '/games') {
+                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.borderColor = '#3b4261';
+                  }
                 }}
               >
-                {clearing ? 'Clearing...' : 'Yes'}
-              </button>
-              <button
-                onClick={() => setShowClearConfirm(false)}
+                Games
+              </a>
+              <a 
+                href="/review"
                 style={{
-                  padding: '6px 12px',
-                  fontSize: 12,
+                  padding: '8px 16px',
+                  borderRadius: 8,
+                  textDecoration: 'none',
+                  fontSize: 15,
                   fontWeight: 600,
-                  background: 'white',
-                  color: '#6b46c1',
-                  border: '2px solid #c5b8fa',
-                  borderRadius: 6,
+                  transition: 'all 0.2s',
+                  background: pathname === '/review' 
+                    ? '#7aa2f7'
+                    : 'transparent',
+                  color: pathname === '/review' ? '#1a1b26' : '#c0caf5',
+                  border: pathname === '/review' ? 'none' : '1px solid #3b4261',
+                }}
+                onMouseEnter={(e) => {
+                  if (pathname !== '/review') {
+                    e.currentTarget.style.background = '#2f3549';
+                    e.currentTarget.style.borderColor = '#7aa2f7';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (pathname !== '/review') {
+                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.borderColor = '#3b4261';
+                  }
+                }}
+              >
+                Review
+              </a>
+              <a 
+                href="/coach"
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: 8,
+                  textDecoration: 'none',
+                  fontSize: 15,
+                  fontWeight: 600,
+                  transition: 'all 0.2s',
+                  background: pathname === '/coach' 
+                    ? '#7aa2f7'
+                    : 'transparent',
+                  color: pathname === '/coach' ? '#1a1b26' : '#c0caf5',
+                  border: pathname === '/coach' ? 'none' : '1px solid #3b4261',
+                }}
+                onMouseEnter={(e) => {
+                  if (pathname !== '/coach') {
+                    e.currentTarget.style.background = '#2f3549';
+                    e.currentTarget.style.borderColor = '#7aa2f7';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (pathname !== '/coach') {
+                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.borderColor = '#3b4261';
+                  }
+                }}
+              >
+                Coach
+              </a>
+            </nav>
+          </div>
+          
+          <button
+            onClick={() => setShowModal(true)}
+            style={{
+              padding: '6px 12px',
+              fontSize: 12,
+              fontWeight: 500,
+              background: 'transparent',
+              color: '#565f89',
+              border: '1px solid #3b4261',
+              borderRadius: 6,
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#2f3549';
+              e.currentTarget.style.borderColor = '#565f89';
+              e.currentTarget.style.color = '#a9b1d6';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent';
+              e.currentTarget.style.borderColor = '#3b4261';
+              e.currentTarget.style.color = '#565f89';
+            }}
+          >
+            Reset
+          </button>
+        </div>
+      </header>
+
+      {/* Confirmation Modal */}
+      {showModal && (
+        <div
+          onClick={() => setShowModal(false)}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            padding: 16,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: '#24283b',
+              borderRadius: 12,
+              padding: 24,
+              maxWidth: 400,
+              width: '100%',
+              border: '1px solid #3b4261',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5)',
+            }}
+          >
+            <h3 style={{ 
+              margin: '0 0 16px 0', 
+              fontSize: 18, 
+              fontWeight: 700, 
+              color: '#c0caf5' 
+            }}>
+              Clear Database?
+            </h3>
+            <p style={{ 
+              margin: '0 0 24px 0', 
+              fontSize: 14, 
+              color: '#a9b1d6',
+              lineHeight: 1.6,
+            }}>
+              This will permanently delete all games, notes, and documents. This action cannot be undone.
+            </p>
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setShowModal(false)}
+                style={{
+                  padding: '8px 16px',
+                  fontSize: 14,
+                  fontWeight: 600,
+                  background: 'transparent',
+                  color: '#c0caf5',
+                  border: '1px solid #3b4261',
+                  borderRadius: 8,
                   cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#2f3549';
+                  e.currentTarget.style.borderColor = '#565f89';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent';
+                  e.currentTarget.style.borderColor = '#3b4261';
                 }}
               >
                 Cancel
               </button>
+              <button
+                onClick={handleClearDatabase}
+                disabled={clearing}
+                style={{
+                  padding: '8px 16px',
+                  fontSize: 14,
+                  fontWeight: 600,
+                  background: clearing 
+                    ? '#565f89'
+                    : '#f7768e',
+                  color: '#1a1b26',
+                  border: 'none',
+                  borderRadius: 8,
+                  cursor: clearing ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  if (!clearing) {
+                    e.currentTarget.style.background = '#ff7a93';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!clearing) {
+                    e.currentTarget.style.background = '#f7768e';
+                  }
+                }}
+              >
+                {clearing ? 'Clearing...' : 'Clear Database'}
+              </button>
             </div>
-          ) : (
-            <button
-              onClick={handleClearDatabase}
-              style={{
-                padding: '8px 16px',
-                fontSize: 13,
-                fontWeight: 600,
-                background: 'linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)',
-                color: 'white',
-                border: 'none',
-                borderRadius: 8,
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-                boxShadow: '0 2px 6px rgba(245, 158, 11, 0.3)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'scale(1.05)';
-                e.currentTarget.style.boxShadow = '0 4px 10px rgba(245, 158, 11, 0.4)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'scale(1)';
-                e.currentTarget.style.boxShadow = '0 2px 6px rgba(245, 158, 11, 0.3)';
-              }}
-            >
-              🗑️ Clear Database
-            </button>
-          )}
+          </div>
         </div>
-      </div>
-    </header>
+      )}
+    </>
   );
 }
 

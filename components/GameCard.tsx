@@ -27,32 +27,32 @@ export default function GameCard(props: Props) {
     <div
       onClick={props.onClick}
       style={{
-        border: '2px solid #c5b8fa',
+        border: '1px solid #3b4261',
         borderRadius: 12,
         padding: 16,
         cursor: props.onClick ? 'pointer' : 'default',
         transition: 'all 0.3s ease',
-        background: 'linear-gradient(135deg, #f5f0ff 0%, #f0f9f0 100%)',
-        boxShadow: '0 2px 8px rgba(155, 135, 245, 0.1)',
+        background: '#24283b',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
       }}
       onMouseEnter={(e) => {
         if (props.onClick) {
-          e.currentTarget.style.backgroundColor = '#e8e0ff';
-          e.currentTarget.style.borderColor = '#9b87f5';
-          e.currentTarget.style.boxShadow = '0 4px 12px rgba(155, 135, 245, 0.25)';
+          e.currentTarget.style.backgroundColor = '#2f3549';
+          e.currentTarget.style.borderColor = '#7aa2f7';
+          e.currentTarget.style.boxShadow = '0 4px 12px rgba(122, 162, 247, 0.3)';
           e.currentTarget.style.transform = 'translateY(-2px)';
         }
       }}
       onMouseLeave={(e) => {
         if (props.onClick) {
-          e.currentTarget.style.backgroundColor = '';
-          e.currentTarget.style.borderColor = '#c5b8fa';
-          e.currentTarget.style.boxShadow = '0 2px 8px rgba(155, 135, 245, 0.1)';
+          e.currentTarget.style.backgroundColor = '#24283b';
+          e.currentTarget.style.borderColor = '#3b4261';
+          e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.3)';
           e.currentTarget.style.transform = 'translateY(0)';
         }
       }}
     >
-      <div style={{ fontWeight: 600, color: '#6b46c1', fontSize: 15, marginBottom: 8 }}>
+      <div style={{ fontWeight: 600, color: '#c0caf5', fontSize: 15, marginBottom: 8 }}>
         Game #{props.id} — {props.file_path}
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
@@ -68,8 +68,8 @@ export default function GameCard(props: Props) {
                 height: 40,
                 objectFit: 'contain',
                 borderRadius: 6,
-                border: '2px solid #9b87f5',
-                background: 'white',
+                border: '2px solid #7aa2f7',
+                background: '#24283b',
                 padding: 2,
               }}
             />
@@ -79,12 +79,12 @@ export default function GameCard(props: Props) {
                 width: 40,
                 height: 40,
                 borderRadius: 6,
-                border: '2px solid #9b87f5',
-                background: 'linear-gradient(135deg, #9b87f5 0%, #7dd87d 100%)',
+                border: '2px solid #7aa2f7',
+                background: 'linear-gradient(135deg, #7aa2f7 0%, #9ece6a 100%)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: 'white',
+                color: '#1a1b26',
                 fontSize: 12,
                 fontWeight: 700,
               }}
@@ -92,10 +92,10 @@ export default function GameCard(props: Props) {
               {characterName.charAt(0).toUpperCase()}
             </div>
           )}
-          <span style={{ color: '#9b87f5', fontWeight: 600, fontSize: 14 }}>{characterName}</span>
+          <span style={{ color: '#7aa2f7', fontWeight: 600, fontSize: 14 }}>{characterName}</span>
         </div>
 
-        <span style={{ color: '#6b46c1', fontWeight: 500 }}>vs</span>
+        <span style={{ color: '#565f89', fontWeight: 500 }}>vs</span>
 
         {/* Opponent Character */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -109,8 +109,8 @@ export default function GameCard(props: Props) {
                 height: 40,
                 objectFit: 'contain',
                 borderRadius: 6,
-                border: '2px solid #7dd87d',
-                background: 'white',
+                border: '2px solid #9ece6a',
+                background: '#24283b',
                 padding: 2,
               }}
             />
@@ -120,12 +120,12 @@ export default function GameCard(props: Props) {
                 width: 40,
                 height: 40,
                 borderRadius: 6,
-                border: '2px solid #7dd87d',
-                background: 'linear-gradient(135deg, #7dd87d 0%, #9b87f5 100%)',
+                border: '2px solid #9ece6a',
+                background: 'linear-gradient(135deg, #9ece6a 0%, #7aa2f7 100%)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: 'white',
+                color: '#1a1b26',
                 fontSize: 12,
                 fontWeight: 700,
               }}
@@ -133,14 +133,14 @@ export default function GameCard(props: Props) {
               {opponentName.charAt(0).toUpperCase()}
             </div>
           )}
-          <span style={{ color: '#7dd87d', fontWeight: 600, fontSize: 14 }}>{opponentName}</span>
+          <span style={{ color: '#9ece6a', fontWeight: 600, fontSize: 14 }}>{opponentName}</span>
         </div>
 
-        <span style={{ color: '#95a5a6', fontSize: 12 }}>•</span>
+        <span style={{ color: '#565f89', fontSize: 12 }}>•</span>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span style={{ color: '#6b46c1', fontWeight: 500, fontSize: 13 }}>{stageName}</span>
-          <span style={{ color: '#95e095', fontSize: 13 }}>({durationFormatted})</span>
+          <span style={{ color: '#a9b1d6', fontWeight: 500, fontSize: 13 }}>{stageName}</span>
+          <span style={{ color: '#9ece6a', fontSize: 13 }}>({durationFormatted})</span>
         </div>
       </div>
     </div>
