@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     
     // Store path in settings
     const db = getDb();
-    const setSetting = db.prepare('INSERT OR REPLACE INTO settings (key, value, updated_at) VALUES (?, ?, datetime("now"))');
+    const setSetting = db.prepare('INSERT OR REPLACE INTO settings (key, value, updated_at) VALUES (?, ?, datetime(\'now\'))');
     setSetting.run('slippi_folder_path', dirPath);
     
     // Start watching

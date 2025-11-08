@@ -1,14 +1,15 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { formatDuration, getCharacterName, getStageName, getCharacterSpriteUrl } from '../lib/slippi-utils';
+import { CharacterId, StageId } from '../lib/types';
 
 type GameDetails = {
   id: number;
   file_path: string;
   date?: string | null;
-  character?: string | null;
-  opponent?: string | null;
-  stage?: string | null;
+  character?: CharacterId | null;
+  opponent?: CharacterId | null;
+  stage?: StageId | null;
   duration?: number | null;
   stocks_taken?: number | null;
   openings_per_kill?: number | null;
@@ -210,7 +211,7 @@ export default function GameDetailsModal({ game, onClose }: Props) {
                     </div>
                   )}
                   <div style={{ fontSize: 16, fontWeight: 600, color: '#c0caf5' }}>{characterName}</div>
-                  {game.character && game.character !== characterName && (
+                  {game.character !== null && game.character !== undefined && (
                     <div style={{ fontSize: 11, color: '#565f89', marginTop: 4 }}>ID: {game.character}</div>
                   )}
                 </div>
@@ -253,7 +254,7 @@ export default function GameDetailsModal({ game, onClose }: Props) {
                     </div>
                   )}
                   <div style={{ fontSize: 16, fontWeight: 600, color: '#9ece6a' }}>{opponentName}</div>
-                  {game.opponent && game.opponent !== opponentName && (
+                  {game.opponent !== null && game.opponent !== undefined && (
                     <div style={{ fontSize: 11, color: '#565f89', marginTop: 4 }}>ID: {game.opponent}</div>
                   )}
                 </div>
@@ -262,7 +263,7 @@ export default function GameDetailsModal({ game, onClose }: Props) {
               <div style={{ padding: '12px', background: '#24283b', borderRadius: 8, border: '1px solid #3b4261' }}>
                 <strong style={{ color: '#7aa2f7', display: 'block', marginBottom: 6, fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Stage</strong>
                 <div style={{ fontSize: 16, fontWeight: 600, color: '#c0caf5' }}>{stageName}</div>
-                {game.stage && game.stage !== stageName && (
+                {game.stage !== null && game.stage !== undefined && (
                   <div style={{ fontSize: 11, color: '#565f89', marginTop: 4 }}>ID: {game.stage}</div>
                 )}
               </div>

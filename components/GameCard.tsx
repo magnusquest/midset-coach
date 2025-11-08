@@ -1,13 +1,14 @@
 "use client";
 import React, { useState } from 'react';
 import { formatDuration, getCharacterName, getStageName, getCharacterSpriteUrl } from '../lib/slippi-utils';
+import { CharacterId, StageId } from '../lib/types';
 
 type Props = {
   id: number;
   file_path: string;
-  character?: string | null;
-  opponent?: string | null;
-  stage?: string | null;
+  character?: CharacterId | null;
+  opponent?: CharacterId | null;
+  stage?: StageId | null;
   duration?: number | null;
   onClick?: () => void;
 };

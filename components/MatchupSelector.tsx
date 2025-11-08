@@ -1,6 +1,7 @@
 "use client";
 import React from 'react';
 import { getCharacterName } from '../lib/slippi-utils';
+import { CHARACTER_NAMES, CharacterId } from '../lib/types';
 
 type Props = {
   userCharacter: string | null;
@@ -9,24 +10,10 @@ type Props = {
   onOpponentCharacterChange: (character: string | null) => void;
 };
 
-// Common Melee characters
-const CHARACTERS = [
-  { id: '1', name: 'Fox' },
-  { id: '19', name: 'Falco' },
-  { id: '23', name: 'Marth' },
-  { id: '7', name: 'Sheik' },
-  { id: '2', name: 'Captain Falcon' },
-  { id: '0', name: 'Mario' },
-  { id: '9', name: 'Peach' },
-  { id: '12', name: 'Pikachu' },
-  { id: '14', name: 'Yoshi' },
-  { id: '15', name: 'Jigglypuff' },
-  { id: '20', name: 'Ganondorf' },
-  { id: '21', name: 'Young Link' },
-  { id: '22', name: 'Game & Watch' },
-  { id: '24', name: 'Zelda' },
-  { id: '25', name: 'Roy' },
-];
+// Common Melee characters - using CharacterId type and CHARACTER_NAMES mapping
+const CHARACTERS = Object.entries(CHARACTER_NAMES)
+  .map(([id, name]) => ({ id, name }))
+  .sort((a, b) => a.name.localeCompare(b.name));
 
 export default function MatchupSelector({
   userCharacter,

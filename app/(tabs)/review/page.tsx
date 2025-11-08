@@ -2,15 +2,16 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { formatDuration, getCharacterName, getStageName, getCharacterSpriteUrl } from '../../../lib/slippi-utils';
+import { CharacterId, StageId } from '../../../lib/types';
 import ReplayLauncher from '../../../components/ReplayLauncher';
 
 type Game = {
   id: number;
   file_path: string;
   date?: string | null;
-  character?: string | null;
-  opponent?: string | null;
-  stage?: string | null;
+  character?: CharacterId | null;
+  opponent?: CharacterId | null;
+  stage?: StageId | null;
   duration?: number | null;
   stocks_taken?: number | null;
   openings_per_kill?: number | null;

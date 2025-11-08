@@ -3,14 +3,15 @@ import React, { useState, useEffect } from 'react';
 import FileDropzone from '../../../components/FileDropzone';
 import GameCard from '../../../components/GameCard';
 import GameDetailsModal from '../../../components/GameDetailsModal';
+import { CharacterId, StageId, STAGE_NAMES } from '../../../lib/types';
 
 type Game = {
   id: number;
   file_path: string;
   date?: string | null;
-  character?: string | null;
-  opponent?: string | null;
-  stage?: string | null;
+  character?: CharacterId | null;
+  opponent?: CharacterId | null;
+  stage?: StageId | null;
   duration?: number | null;
   stocks_taken?: number | null;
   openings_per_kill?: number | null;
@@ -169,12 +170,18 @@ export default function GamesPage() {
             }}
           >
             <option value="">All</option>
-            <option value="8">Battlefield</option>
-            <option value="31">Final Destination</option>
-            <option value="28">Dream Land</option>
-            <option value="2">Yoshi's Story</option>
-            <option value="3">Fountain of Dreams</option>
-            <option value="4">Pokemon Stadium</option>
+            {Object.entries(STAGE_NAMES)
+              .filter(([id]) => {
+                // Filter out "Unknown Stage" entries and target tests, show only common tournament stages
+                const stageId = parseInt(id, 10);
+                return stageId !== 0 && stageId !== 1 && stageId !== 21 && stageId < 33;
+              })
+              .sort(([idA], [idB]) => parseInt(idA, 10) - parseInt(idB, 10))
+              .map(([id, name]) => (
+                <option key={id} value={id}>
+                  {name}
+                </option>
+              ))}
           </select>
         </div>
         <div>
